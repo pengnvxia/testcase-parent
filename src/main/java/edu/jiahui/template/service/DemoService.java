@@ -1,4 +1,4 @@
-package edu.jiahui.intranet.service;
+package edu.jiahui.template.service;
 
 /**
  * <p>

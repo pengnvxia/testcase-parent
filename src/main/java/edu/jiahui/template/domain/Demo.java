@@ -1,4 +1,4 @@
-package edu.jiahui.intranet.domain;
+package edu.jiahui.template.domain;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
-package edu.jiahui.intranet.controller;
+package edu.jiahui.template.controller;
 
-import edu.jiahui.intranet.domain.Demo;
+import edu.jiahui.template.domain.Demo;
 import org.springframework.web.bind.annotation.*;
 
 /**

@@ -1,4 +1,4 @@
-package edu.jiahui.intranet;
+package edu.jiahui.template;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
