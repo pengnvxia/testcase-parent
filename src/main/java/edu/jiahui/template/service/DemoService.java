@@ -1,4 +1,4 @@
-package edu.jiahui.template.service;
+package edu.jiahui.{{ name }}.service;
 
 /**
  * <p>
