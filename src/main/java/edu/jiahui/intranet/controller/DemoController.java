@@ -1,7 +1,6 @@
-package edu.jiahui.point.controller;
+package edu.jiahui.intranet.controller;
 
-import edu.jiahui.point.domain.Demo;
-import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.intranet.domain.Demo;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -22,8 +21,7 @@ public class DemoController {
     @RequestMapping(method = RequestMethod.GET, value = "/testGet")
     public String testGet(@RequestParam String testId) {
 
-        throw new ClientException();
-//        return "OK";
+        return "OK";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/testPost")

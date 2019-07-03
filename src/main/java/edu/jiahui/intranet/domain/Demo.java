@@ -1,4 +1,6 @@
-package edu.jiahui.point.service;
+package edu.jiahui.intranet.domain;
+
+import lombok.Data;
 
 /**
  * <p>
@@ -11,5 +13,10 @@ package edu.jiahui.point.service;
  * @author krame
  * @date 2019/7/2
  */
-public class DemoService {
+@Data
+public class Demo {
+
+    private String id;
+    private String key;
+    private String value;
 }
