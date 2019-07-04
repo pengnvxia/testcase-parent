@@ -26,7 +26,7 @@
         <dependency>
             <groupId>edu.jiahui</groupId>
             <artifactId>framework-starter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.release.version}</version>
         </dependency>
     </dependencies>
 
