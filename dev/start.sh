@@ -8,4 +8,4 @@ time=`date +%F-%H-%M-%S`
 cd /opt/docker/
 docker build -t {{ name }}-dev:$time ./
 docker rm -f `docker ps -a -q`
-docker run -d -p 8080:8080 {{ name }}:$time
+docker run -d -p 8080:8080 {{ name }}-dev:$time
