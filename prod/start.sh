@@ -1,11 +1,13 @@
-rm -rf /opt/docker/application*
-rm -rf /opt/docker/{{ name }}-1.0.0-RELEASE.jar
-cd /{{ name }}
-mv application* /opt/docker/
-mv {{ name }}-1.0.0-RELEASE.jar /opt/docker
-sed -i "s#spring.profiles.active=local#spring.profiles.active=prod#g" /opt/docker/application.properties
+#删除之前存活的镜像
+docker rm -f `docker ps -a |grep {{ name }}-prod|awk '{print $1}'`
 time=`date +%F-%H-%M-%S`
-cd /opt/docker/
+#替换文件
+sed -i "s#spring.profiles.active=local#spring.profiles.active=prod#g" /{{ name }}/application.properties
+#进入目录
+cd /{{ name }}
+#构建镜像
 docker build -t {{ name }}-prod:$time ./
-docker rm -f `docker ps -a -q`
+#运行镜像
 docker run -d -p 8080:8080 {{ name }}-prod:$time
+#删除文件
+rm -rf /{{ name }}/*
