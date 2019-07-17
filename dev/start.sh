@@ -8,6 +8,6 @@ cd /{{ name }}
 #构建镜像
 docker build -t {{ name }}-dev:$time ./
 #运行镜像
-docker run -d -p 8080:8080 {{ name }}-dev:$time
+docker run -d -p 8080:8080 -v /etc/localtime:/etc/localtime:ro {{ name }}-dev:$time
 #删除文件
 rm -rf /{{ name }}/*
