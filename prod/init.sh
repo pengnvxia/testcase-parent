@@ -1,5 +1,5 @@
 service sshd start
 source /etc/profile
 cd /opt
-java -jar ./{{ name }}-1.0.0-RELEASE.jar &
+java -Xmx3072m -Xms3072m -jar ./{{ name }}-1.0.0-RELEASE.jar &
 tail -f /etc/hosts
