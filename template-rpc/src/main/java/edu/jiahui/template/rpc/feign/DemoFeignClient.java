@@ -1,4 +1,4 @@
-package edu.jiahui.template.rpc.feign;
+package edu.jiahui.{{ name }}.rpc.feign;
 
 import edu.jiahui.{{ name }}.constant.ServiceConstant;
 import edu.jiahui.{{ name }}.domain.Demo;
