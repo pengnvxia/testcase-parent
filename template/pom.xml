@@ -3,17 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <name>point</name>
-    <description>Point project for Spring Boot</description>
+    <name>{{ name }}</name>
+    <description>{{ name }} project for Spring Boot</description>
 
     <groupId>edu.jiahui</groupId>
-    <artifactId>point</artifactId>
+    <artifactId>{{ name }}</artifactId>
     <version>${project.release.version}</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>edu.jiahui</groupId>
-        <artifactId>point-parent</artifactId>
+        <artifactId>{{ name }}-parent</artifactId>
         <version>1.0.0.RELEASE</version>
     </parent>
 
@@ -22,18 +22,14 @@
             <groupId>edu.jiahui</groupId>
             <artifactId>framework-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>edu.jiahui</groupId>
-            <artifactId>confplus-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>edu.jiahui</groupId>
-            <artifactId>schedulerplus-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.aliyun.oss</groupId>
-            <artifactId>aliyun-sdk-oss</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>edu.jiahui</groupId>-->
+            <!--<artifactId>confplus-starter</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>edu.jiahui</groupId>-->
+            <!--<artifactId>schedulerplus-starter</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -44,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>edu.jiahui</groupId>
-            <artifactId>point-common</artifactId>
+            <artifactId>{{ name }}-common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ecwid.consul</groupId>
@@ -59,7 +55,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>edu.jiahui.point.Application</mainClass>
+                    <mainClass>edu.jiahui.{{ name }}.Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>

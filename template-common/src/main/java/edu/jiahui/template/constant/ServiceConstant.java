@@ -1,4 +1,4 @@
-package edu.jiahui.{{ name }}.service;
+package edu.jiahui.template.constant;
 
 /**
  * <p>
@@ -9,7 +9,10 @@ package edu.jiahui.{{ name }}.service;
  * permission of Shanghai JiaHui Edu., Ltd.
  *
  * @author krame
- * @date 2019/7/2
+ * @date 2019/11/14
  */
-public class DemoService {
+public class ServiceConstant {
+
+    public static final String SERVICE_NAME = "{{ name }}";
+    public static final String ROOT_URL = "/" + SERVICE_NAME;
 }

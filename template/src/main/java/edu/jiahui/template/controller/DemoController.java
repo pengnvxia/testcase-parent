@@ -1,4 +1,4 @@
-package edu.jiahui.{{ name }}.controller;
+package edu.jiahui.template.controller.{{ name }}.controller;
 
 import edu.jiahui.{{ name }}.domain.Demo;
 import org.springframework.web.bind.annotation.*;

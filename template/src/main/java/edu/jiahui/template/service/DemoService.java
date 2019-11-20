@@ -1,6 +1,4 @@
-package edu.jiahui.{{ name }}.domain;
-
-import lombok.Data;
+package edu.jiahui.template.service.{{ name }}.service;
 
 /**
  * <p>
@@ -13,10 +11,5 @@ import lombok.Data;
  * @author krame
  * @date 2019/7/2
  */
-@Data
-public class Demo {
-
-    private String id;
-    private String key;
-    private String value;
+public class DemoService {
 }

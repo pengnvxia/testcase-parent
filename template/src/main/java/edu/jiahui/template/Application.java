@@ -1,4 +1,4 @@
-package edu.jiahui.{{ name }};
+package edu.jiahui.template.{{ name }};
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
