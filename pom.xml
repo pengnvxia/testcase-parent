@@ -3,39 +3,49 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <name>{{ name }}</name>
+    <name>{{ name }}-parent</name>
     <description>{{ name }} project for Spring Boot</description>
 
     <groupId>edu.jiahui</groupId>
-    <artifactId>{{ name }}</artifactId>
-    <version>${project.release.version}</version>
-    <packaging>jar</packaging>
+    <artifactId>{{ name }}-parent</artifactId>
+    <version>1.0.0.RELEASE</version>
+    <packaging>pom</packaging>
 
     <parent>
         <groupId>edu.jiahui</groupId>
         <artifactId>base-pom</artifactId>
         <version>1.0.0.RELEASE</version>
-        <relativePath/>
     </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>edu.jiahui</groupId>
-            <artifactId>framework-starter</artifactId>
-            <version>${project.release.version}</version>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>{{ name }}-common</module>
+        <module>{{ name }}-rpc</module>
+        <module>{{ name }}</module>
+    </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>edu.jiahui.{{ name }}.Application</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>framework-starter</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>feign-starter</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>consul-starter</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>{{ name }}-common</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
