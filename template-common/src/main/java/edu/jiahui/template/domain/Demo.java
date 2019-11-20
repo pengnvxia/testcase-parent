@@ -1,4 +1,6 @@
-package edu.jiahui.{{ name }}.constant;
+package edu.jiahui.{{ name }}.domain;
+
+import lombok.Data;
 
 /**
  * <p>
@@ -9,10 +11,12 @@ package edu.jiahui.{{ name }}.constant;
  * permission of Shanghai JiaHui Edu., Ltd.
  *
  * @author krame
- * @date 2019/11/14
+ * @date 2019/7/2
  */
-public class ServiceConstant {
+@Data
+public class Demo {
 
-    public static final String SERVICE_NAME = "{{ name }}";
-    public static final String ROOT_URL = "/" + SERVICE_NAME;
+    private String id;
+    private String key;
+    private String value;
 }
