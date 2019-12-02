@@ -1,6 +1,6 @@
 package edu.jiahui.{{ name }}.controller;
 
-import edu.jiahui.{{ name }}.domain.Demo;
+import edu.jiahui.{{ name }}.common.bo.Demo;
 import org.springframework.web.bind.annotation.*;
 
 /**

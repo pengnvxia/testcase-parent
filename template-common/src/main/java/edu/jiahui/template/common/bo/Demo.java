@@ -1,4 +1,4 @@
-package edu.jiahui.{{ name }}.domain;
+package edu.jiahui.{{ name }}.common.bo;
 
 import lombok.Data;
 
