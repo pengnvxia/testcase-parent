@@ -1,7 +1,7 @@
 package edu.jiahui.{{ name }}.rpc.feign;
 
 import edu.jiahui.{{ name }}.constant.ServiceConstant;
-import edu.jiahui.{{ name }}.domain.Demo;
+import edu.jiahui.{{ name }}.common.bo.Demo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
