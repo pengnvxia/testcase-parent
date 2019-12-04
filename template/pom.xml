@@ -22,17 +22,17 @@
             <groupId>edu.jiahui</groupId>
             <artifactId>framework-starter</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>edu.jiahui</groupId>-->
-            <!--<artifactId>confplus-starter</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>edu.jiahui</groupId>-->
-            <!--<artifactId>schedulerplus-starter</artifactId>-->
-        <!--</dependency>-->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>mybatis-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>confplus-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>schedulerplus-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>edu.jiahui</groupId>

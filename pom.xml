@@ -30,16 +30,21 @@
                 <artifactId>framework-starter</artifactId>
                 <version>${project.release.version}</version>
             </dependency>
-            <!--<dependency>-->
-                <!--<groupId>edu.jiahui</groupId>-->
-                <!--<artifactId>confplus-starter</artifactId>-->
-                <!--<version>${project.release.version}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>edu.jiahui</groupId>-->
-                <!--<artifactId>schedulerplus-starter</artifactId>-->
-                <!--<version>${project.release.version}</version>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>mybatis-starter</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>confplus-starter</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>schedulerplus-starter</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
             <dependency>
                 <groupId>edu.jiahui</groupId>
                 <artifactId>feign-starter</artifactId>
