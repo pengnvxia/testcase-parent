@@ -19,7 +19,7 @@
 
         <!--jdbc的数据库连接 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://rm-uf64z82ps465ndd26bo.mysql.rds.aliyuncs.com:3306/{{ name }}"
+                        connectionURL="jdbc:mysql://rm-uf64z82ps465ndd26.mysql.rds.aliyuncs.com:3306/{{ name }}dev"
                         userId="{{ name }}"
                         password="1qaz@WSX">
         </jdbcConnection>
