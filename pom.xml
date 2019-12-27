@@ -52,6 +52,11 @@
             </dependency>
             <dependency>
                 <groupId>edu.jiahui</groupId>
+                <artifactId>registry-starter</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.jiahui</groupId>
                 <artifactId>consul-starter</artifactId>
                 <version>${project.release.version}</version>
             </dependency>

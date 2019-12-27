@@ -36,6 +36,14 @@
         </dependency>
         <dependency>
             <groupId>edu.jiahui</groupId>
+            <artifactId>feign-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>registry-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
             <artifactId>consul-starter</artifactId>
         </dependency>
         <dependency>
