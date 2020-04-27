@@ -1,4 +1,6 @@
 FROM 172.19.22.1/java-initial/java:v1
+ARG variable={{ name }}_dev
+ENV CLUSTER_NAME=$variable
 RUN cd /opt/
 ADD application* /opt/
 ADD {{ name }}* /opt/
