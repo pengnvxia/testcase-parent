@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.jiahui.testcase.mapper.TestcaseConfigMapper">
+    <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.TestcaseConfig">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="config_name" jdbcType="VARCHAR" property="configName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="project_id" jdbcType="INTEGER" property="projectId" />
+        <result column="env_id" jdbcType="INTEGER" property="envId" />
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+        <result column="updated_by" jdbcType="VARCHAR" property="updatedBy" />
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, config_name, project_id, env_id, description, created_by, updated_by, created_at,updated_at
+    </sql>
+
+
+    <select id="select" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from testcase_config order by id desc
+    </select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.jiahui.testcase.mapper.TestcaseMapper" >
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.Testcase" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="testcase_name" property="testcaseName" jdbcType="VARCHAR" />
+    <result column="env_id" property="envId" jdbcType="INTEGER" />
+    <result column="config_ids" property="configIds" jdbcType="VARCHAR" />
+    <result column="request_type" property="requestType" jdbcType="CHAR" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="headers" property="headers" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="edu.jiahui.testcase.domain.TestcaseWithBLOBs" extends="BaseResultMap" >
+    <result column="variables" property="variables" jdbcType="LONGVARCHAR" />
+    <result column="sql_sentence" property="sqlSentence" jdbcType="LONGVARCHAR" />
+    <result column="parameters" property="parameters" jdbcType="LONGVARCHAR" />
+    <result column="setup_hooks" property="setupHooks" jdbcType="LONGVARCHAR" />
+    <result column="params" property="params" jdbcType="LONGVARCHAR" />
+    <result column="body" property="body" jdbcType="LONGVARCHAR" />
+    <result column="extract_variables" property="extractVariables" jdbcType="LONGVARCHAR" />
+    <result column="validate" property="validate" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, project_id, testcase_name, env_id, config_ids, request_type, path, headers, description,
+    created_at, updated_at, created_by, updated_by
+  </sql>
+  <sql id="Blob_Column_List" >
+    variables, sql, parameters, setup_hooks, params, body, extract, validate
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from testcase
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseWithBLOBs">
+    insert into testcase (project_id, testcase_name, env_id, config_ids, request_type, path, headers, description, variables, sql_sentence, parameters, setup_hooks, params, body, extract_variables, validate)
+    values
+    (#{projectId},#{testcaseName},#{envId},#{configIds},#{requestType},#{path},#{headers},#{description},#{variables},#{sqlSentence},#{parameters},#{setupHooks},#{params},#{body},#{extractVariables},#{validate})
+  </insert>
+</mapper>

@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <name>{{ name }}-parent</name>
-    <description>{{ name }} project for Spring Boot</description>
+    <name>testcase-parent</name>
+    <description>testcase project for Spring Boot</description>
 
     <groupId>edu.jiahui</groupId>
-    <artifactId>{{ name }}-parent</artifactId>
+    <artifactId>testcase-parent</artifactId>
     <version>1.0.0.RELEASE</version>
     <packaging>pom</packaging>
 
@@ -18,9 +18,9 @@
     </parent>
 
     <modules>
-        <module>{{ name }}-common</module>
-        <module>{{ name }}-rpc</module>
-        <module>{{ name }}</module>
+        <module>testcase-common</module>
+        <module>testcase-rpc</module>
+        <module>testcase</module>
     </modules>
 
     <dependencyManagement>
@@ -35,7 +35,7 @@
                 <artifactId>mybatis-starter</artifactId>
                 <version>${project.release.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>edu.jiahui</groupId>
                 <artifactId>confplus-starter</artifactId>
                 <version>${project.release.version}</version>
@@ -44,7 +44,7 @@
                 <groupId>edu.jiahui</groupId>
                 <artifactId>schedulerplus-starter</artifactId>
                 <version>${project.release.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>edu.jiahui</groupId>
                 <artifactId>feign-starter</artifactId>
@@ -62,7 +62,7 @@
             </dependency>
             <dependency>
                 <groupId>edu.jiahui</groupId>
-                <artifactId>{{ name }}-common</artifactId>
+                <artifactId>testcase-common</artifactId>
                 <version>${project.release.version}</version>
             </dependency>
         </dependencies>

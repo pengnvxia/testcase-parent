@@ -19,9 +19,10 @@
 
         <!--jdbc的数据库连接 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://rm-uf64z82ps465ndd26.mysql.rds.aliyuncs.com:3306/{{ name }}dev"
-                        userId="{{ name }}"
+                        connectionURL="jdbc:mysql://rm-uf62aff99b4sls267.mysql.rds.aliyuncs.com:3306/testcase"
+                        userId="testcase"
                         password="1qaz@WSX">
+
         </jdbcConnection>
 
 
@@ -34,8 +35,8 @@
             targetPackage     指定生成的model生成所在的包名
             targetProject     指定在该项目下所在的路径
         -->
-        <javaModelGenerator targetPackage="edu.jiahui.{{ name }}.domain"
-                            targetProject="../{{ name }}/src/main/java">
+        <javaModelGenerator targetPackage="edu.jiahui.testcase.domain"
+                            targetProject="../testcase/src/main/java">
             <!-- 是否对model添加 构造函数 -->
             <!--<property name="constructorBased" value="true"/>-->
             <property name="constructorBased" value="false"/>
@@ -53,8 +54,8 @@
         </javaModelGenerator>
 
         <!-- Mapper映射文件生成所在的目录 为每一个数据库的表生成对应的SqlMap文件 -->
-        <sqlMapGenerator targetPackage="edu.jiahui.{{ name }}.mapper"
-                         targetProject="../{{ name }}/src/main/resources">
+        <sqlMapGenerator targetPackage="edu.jiahui.testcase.mapper"
+                         targetProject="../testcase/src/main/resources">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
 
@@ -64,8 +65,8 @@
                 type="MIXEDMAPPER",生成基于注解的Java Model和相应的Mapper对象
                 type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口
         -->
-        <javaClientGenerator targetPackage="edu.jiahui.{{ name }}.mapper"
-                             targetProject="../{{ name }}/src/main/java"
+        <javaClientGenerator targetPackage="edu.jiahui.testcase.mapper"
+                             targetProject="../testcase/src/main/java"
                              type="XMLMAPPER">
             <property name="enableSubPackages" value="false"/>
             <!--
@@ -95,7 +96,7 @@
         <!--&lt;!&ndash;防止表名和数据库关键字一样&ndash;&gt;-->
         <!--<property name="runtimeTableName" value="`column`"></property>-->
         <!--</table>-->
-        <table tableName="agent_reward_record" domainObjectName="Reward" enableCountByExample="false" enableUpdateByExample="false"
+        <table tableName="project" domainObjectName="Project" enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"
                enableInsert="false" enableSelectByPrimaryKey="true" enableUpdateByPrimaryKey="false"
                enableDeleteByPrimaryKey="false"

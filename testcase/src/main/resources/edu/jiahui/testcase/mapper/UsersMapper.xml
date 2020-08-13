@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.jiahui.testcase.mapper.UsersMapper" >
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.Users" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fullname" property="fullname" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="token" property="email" jdbcType="VARCHAR" />
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, fullname, password, email, deleted_at, created_at, updated_at, created_by, updated_by
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from users
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Users">
+    insert into users (fullname,password,email) values (#{fullname},#{password},#{email})
+  </insert>
+  <select id="selectByNamePassword" parameterType="edu.jiahui.testcase.domain.Users" resultType="java.lang.Integer">
+    select count(*) from users where fullname=#{fullname} and password=#{password}
+  </select>
+  <update id="updateToken" parameterType="edu.jiahui.testcase.domain.Users">
+    update users set token=#{token}  where fullname=#{fullname} and password=#{password}
+  </update>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <name>testcase</name>
+    <description>testcase project for Spring Boot</description>
+
+    <groupId>edu.jiahui</groupId>
+    <artifactId>testcase</artifactId>
+    <version>${project.release.version}</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>edu.jiahui</groupId>
+        <artifactId>testcase-parent</artifactId>
+        <version>1.0.0.RELEASE</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>framework-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>mybatis-starter</artifactId>
+        </dependency>
+        <!--<dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>confplus-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>schedulerplus-starter</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>feign-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>registry-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>consul-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.jiahui</groupId>
+            <artifactId>testcase-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ecwid.consul</groupId>
+            <artifactId>consul-api</artifactId>
+            <version>1.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython-standalone</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.10.2</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>edu.jiahui.testcase.Application</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

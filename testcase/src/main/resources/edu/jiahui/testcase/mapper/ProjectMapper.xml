@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.jiahui.testcase.mapper.ProjectMapper" >
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.Project" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="dev_address" property="devAddress" jdbcType="VARCHAR" />
+    <result column="prod_address" property="prodAddress" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, project_name, dev_address, prod_address, description, created_at, created_by,
+    updated_at, updated_by
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from project
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultType="edu.jiahui.testcase.domain.Project" >
+    select p.id,p.project_name as projectName,p.dev_address as devAddress,p.prod_address as prodAddress,p.description,p.created_at as createdAt,p.updated_at as updatedAt,u1.username as createdName,u2.username as updatedName
+    from project p ,users u1,users u2 where p.created_by =u1.id and p.updated_by=u2.id order by p.project_name asc
+  </select>
+  <select id="projectNameExit" resultType="java.lang.Integer">
+    select count(1) from project
+    where project_name=#{projectName}
+    <if test="id!=null">
+      and id &lt;&gt; #{id}
+    </if>
+  </select>
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Project">
+    insert into project
+    (project_name,dev_address,prod_address,description) values (#{projectName},#{devAddress},#{prodAddress},#{description})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.Project">
+    update project set project_name=#{projectName},dev_address=#{devAddress},prod_address=#{prodAddress},description=#{description},created_at=#{createdAt},created_by=#{createdBy},updated_at=#{updatedAt},updated_by=#{updatedBy}
+    where id=#{id}
+  </update>
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from project where id=#{id}
+  </delete>
+
+</mapper>
