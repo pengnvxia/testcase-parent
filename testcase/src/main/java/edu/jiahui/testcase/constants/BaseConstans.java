@@ -8,7 +8,12 @@ public class BaseConstans {
      */
     public enum BUSI_CODE {
         PROJECT_NOT_EXIT("PRO001","项目不存在"),
-        PROJECT_NAME_EXIT("PRO002","项目名称存在");
+        PROJECT_NAME_EXIT("PRO002","项目名称存在"),
+        MODULE_NOT_EXIT("MO001","模块不存在"),
+        MODULE_NAME_EXIT("MO002","模块名称存在"),
+        INTERFACE_NOT_EXIT("INTER001","接口不存在"),
+        CASE_EXIT("CASE001","存在用例"),
+        ;
 
 
         private String code;

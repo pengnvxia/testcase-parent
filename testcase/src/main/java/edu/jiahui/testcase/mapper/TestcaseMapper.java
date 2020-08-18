@@ -1,8 +1,10 @@
 package edu.jiahui.testcase.mapper;
 
-import edu.jiahui.testcase.domain.TestcaseWithBLOBs;
+import edu.jiahui.testcase.domain.Testcase;
+
+import java.util.List;
 
 public interface TestcaseMapper {
-    TestcaseWithBLOBs selectByPrimaryKey(Integer id);
-    void insert(TestcaseWithBLOBs testcase);
+    Testcase selectByPrimaryKey(Integer id);
+    List<Testcase> selectByInterfaceId(Integer interfaceId);
 }

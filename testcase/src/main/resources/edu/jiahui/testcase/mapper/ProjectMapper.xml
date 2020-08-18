@@ -22,9 +22,14 @@
     from project
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <select id="selectAll" resultType="edu.jiahui.testcase.domain.Project" >
     select p.id,p.project_name as projectName,p.dev_address as devAddress,p.prod_address as prodAddress,p.description,p.created_at as createdAt,p.updated_at as updatedAt,u1.username as createdName,u2.username as updatedName
-    from project p ,users u1,users u2 where p.created_by =u1.id and p.updated_by=u2.id order by p.project_name asc
+    from project p ,users u1,users u2 where
+    p.created_by =u1.id
+    and
+    p.updated_by=u2.id
+     order by p.project_name asc
   </select>
   <select id="projectNameExit" resultType="java.lang.Integer">
     select count(1) from project

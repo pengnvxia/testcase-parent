@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.jiahui.testcase.mapper.ModulesMapper" >
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.Modules" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="BIGINT" />
+    <result column="creatorId" property="creatorId" jdbcType="INTEGER" />
+    <result column="repositoryId" property="repositoryId" jdbcType="INTEGER" />
+    <result column="env_id" property="envId" jdbcType="INTEGER" />
+    <result column="createdAt" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updatedAt" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="deletedAt" property="deletedAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="edu.jiahui.testcase.domain.Modules" extends="BaseResultMap" >
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, priority, creatorId, repositoryId, env_id, createdAt, updatedAt, deletedAt
+  </sql>
+  <sql id="Blob_Column_List" >
+    description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from modules
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="moduleNameExit" resultType="java.lang.Integer">
+    select count(1) from modules
+    where name=#{name}
+    and
+    <if test="id!=null">
+     id &lt;&gt; #{id}
+    </if>
+  </select>
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Modules">
+    insert into modules (name, description, repositoryId, env_id)
+    values (#{name}, #{description}, #{repositoryId}, #{envId})
+  </insert>
+  <select id="selectModules" parameterType="java.lang.Integer" resultType="edu.jiahui.testcase.domain.Modules">
+    select id,name from modules
+    where env_id=#{envId} and repositoryId=#{repositoryId} and deletedAt is NULL
+    order by priority desc,createdAt asc
+  </select>
+</mapper>

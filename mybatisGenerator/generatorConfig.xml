@@ -96,7 +96,7 @@
         <!--&lt;!&ndash;防止表名和数据库关键字一样&ndash;&gt;-->
         <!--<property name="runtimeTableName" value="`column`"></property>-->
         <!--</table>-->
-        <table tableName="project" domainObjectName="Project" enableCountByExample="false" enableUpdateByExample="false"
+        <table tableName="testcase_detail" domainObjectName="TestcaseDetail" enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"
                enableInsert="false" enableSelectByPrimaryKey="true" enableUpdateByPrimaryKey="false"
                enableDeleteByPrimaryKey="false"
