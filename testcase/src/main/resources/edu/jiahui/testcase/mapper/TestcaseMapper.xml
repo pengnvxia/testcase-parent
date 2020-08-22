@@ -29,5 +29,8 @@
     from testcase
     where interface_id=#{interfaceId}
   </select>
-
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Testcase">
+    insert into testcase set (testcase_name,env_id,config_ids,testcase_group_id,interface_id) values
+    (#{testcaseName},#{envId},#{configIds},#{testcaseGroupId},#{interfaceId})
+  </insert>
 </mapper>

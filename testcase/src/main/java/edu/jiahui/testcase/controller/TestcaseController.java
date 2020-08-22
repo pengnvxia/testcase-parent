@@ -1,26 +1,26 @@
-//package edu.jiahui.testcase.controller;
-//
-//import edu.jiahui.framework.util.ResultCode;
-//import edu.jiahui.testcase.domain.request.CreateTestcaseReq;
-//import edu.jiahui.testcase.service.TestcaseService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestMethod;
-//import org.springframework.web.bind.annotation.RestController;
-//import java.util.List;
-//
-//import javax.validation.Valid;
-//
-//@RestController
-//@RequestMapping("/")
-//public class TestcaseController {
-//
-//
-//    @Autowired
-//    private TestcaseService testcaseService;
-//
-//
+package edu.jiahui.testcase.controller;
+
+import edu.jiahui.framework.util.ResultCode;
+import edu.jiahui.testcase.domain.request.CreateTestcaseReq;
+import edu.jiahui.testcase.service.TestcaseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/")
+public class TestcaseController {
+
+
+    @Autowired
+    private TestcaseService testcaseService;
+
+
 //    @RequestMapping(method = RequestMethod.POST, value = "/create/testcase")
 //    public ResultCode<List<String>> createTestcase(@RequestBody @Valid CreateTestcaseReq req){
 //        try{
@@ -52,4 +52,4 @@
 //            return ResultCode.getSuccessReturn(null, "运行用例成功", null);
 //        }
 //    }
-//}
+}

@@ -4,4 +4,5 @@ import edu.jiahui.testcase.domain.TestcaseDetail;
 
 public interface TestcaseDetailMapper {
     TestcaseDetail selectByPrimaryKey(Integer id);
+    void insert(TestcaseDetail testcaseDetail);
 }

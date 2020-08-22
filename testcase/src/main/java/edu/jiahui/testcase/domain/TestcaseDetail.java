@@ -30,4 +30,8 @@ public class TestcaseDetail {
 
     private Integer updatedBy;
 
+    private String comparator;
+
+    private String expectedValue;
+
 }

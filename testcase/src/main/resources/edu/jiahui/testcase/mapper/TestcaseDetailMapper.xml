@@ -14,15 +14,23 @@
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
     <result column="created_by" property="createdBy" jdbcType="INTEGER" />
     <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
+    <result column="comparator" property="comparator" jdbcType="CHAR" />
+    <result column="expected_value" property="expectedValue" jdbcType="VARCHAR" />
+
   </resultMap>
   <sql id="Base_Column_List" >
-    id, scope, type, name, properties_id, value, database_id, testcase_id, created_at, 
+    id, scope, type, name, properties_id, value, database_id, testcase_id, created_at,
     updated_at, created_by, updated_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from testcase_detail
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
+    insert testcase_detail set (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value)
+    values
+    (#{scope},#{type},#{name},#{propertiesId},#{value},#{databaseId},#{testcaseId},#{comparator},#{expectedValue})
+  </insert>
 </mapper>
