@@ -7,5 +7,7 @@ import java.util.List;
 public interface TestcaseMapper {
     Testcase selectByPrimaryKey(Integer id);
     List<Testcase> selectByInterfaceId(Integer interfaceId);
-    void insert(Testcase testcase);
+    Integer insert(Testcase testcase);
+    void deleteByPrimaryKey(Integer id);
+    void updateByPrimaryKey(Testcase testcase);
 }

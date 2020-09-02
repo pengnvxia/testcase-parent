@@ -17,20 +17,32 @@
     id, testcase_name, env_id, config_ids, created_at, updated_at, created_by, updated_by,
     testcase_group_id,interface_id
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     from testcase
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <select id="selectByInterfaceId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from testcase
     where interface_id=#{interfaceId}
   </select>
-  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Testcase">
-    insert into testcase set (testcase_name,env_id,config_ids,testcase_group_id,interface_id) values
-    (#{testcaseName},#{envId},#{configIds},#{testcaseGroupId},#{interfaceId})
+
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Testcase" useGeneratedKeys="true" keyProperty="id">
+    insert into testcase (testcase_name,env_id,config_ids,interface_id) values
+    (#{testcaseName},#{envId},#{configIds},#{interfaceId})
   </insert>
+
+  <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.Testcase" >
+    update testcase set testcase_name=#{testcaseName},env_id=#{envId},config_ids=#{configIds}
+    where id=#{id}
+  </update>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from testcase where id=#{id}
+  </delete>
 </mapper>

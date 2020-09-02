@@ -1,44 +1,44 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="edu.jiahui.testcase.mapper.PropertiesMapper" >
-  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.Properties" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="scope" property="scope" jdbcType="CHAR" />
-    <result column="type" property="type" jdbcType="CHAR" />
-    <result column="pos" property="pos" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="rule" property="rule" jdbcType="VARCHAR" />
-    <result column="parentId" property="parentid" jdbcType="INTEGER" />
-    <result column="priority" property="priority" jdbcType="BIGINT" />
-    <result column="interfaceId" property="interfaceid" jdbcType="INTEGER" />
-    <result column="creatorId" property="creatorid" jdbcType="INTEGER" />
-    <result column="moduleId" property="moduleid" jdbcType="INTEGER" />
-    <result column="repositoryId" property="repositoryid" jdbcType="INTEGER" />
-    <result column="required" property="required" jdbcType="BIT" />
-    <result column="createdAt" property="createdat" jdbcType="TIMESTAMP" />
-    <result column="updatedAt" property="updatedat" jdbcType="TIMESTAMP" />
-    <result column="deletedAt" property="deletedat" jdbcType="TIMESTAMP" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.jiahui.testcase.mapper.PropertiesMapper">
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.Properties">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scope" jdbcType="CHAR" property="scope" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="pos" jdbcType="INTEGER" property="pos" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="rule" jdbcType="VARCHAR" property="rule" />
+    <result column="parentId" jdbcType="INTEGER" property="parentId" />
+    <result column="priority" jdbcType="BIGINT" property="priority" />
+    <result column="interfaceId" jdbcType="INTEGER" property="interfaceId" />
+    <result column="creatorId" jdbcType="INTEGER" property="creatorId" />
+    <result column="moduleId" jdbcType="INTEGER" property="moduleId" />
+    <result column="repositoryId" jdbcType="INTEGER" property="repositoryId" />
+    <result column="required" jdbcType="BIT" property="required" />
+    <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updatedAt" jdbcType="TIMESTAMP" property="updatedAt" />
+    <result column="deletedAt" jdbcType="TIMESTAMP" property="deletedAt" />
+    <result column="value" jdbcType="LONGVARCHAR" property="value" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="edu.jiahui.testcase.domain.PropertiesWithBLOBs" extends="BaseResultMap" >
-    <result column="value" property="value" jdbcType="LONGVARCHAR" />
-    <result column="description" property="description" jdbcType="LONGVARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     id, scope, type, pos, name, rule, parentId, priority, interfaceId, creatorId, moduleId,
-    repositoryId, required, createdAt, updatedAt, deletedAt
+    repositoryId, required, createdAt, updatedAt, deletedAt,value, description
   </sql>
-  <sql id="Blob_Column_List" >
-    value, description
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from properties
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByInterfaceId" parameterType="java.lang.Integer">
     delete from properties where interfaceId=#{interfaceId}
   </delete>
+
+  <select id="selectByInterfaceId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from properties
+    where  interfaceId= #{interfaceId,jdbcType=INTEGER} order by priority asc
+  </select>
 </mapper>

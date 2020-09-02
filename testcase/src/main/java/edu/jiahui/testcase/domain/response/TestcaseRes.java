@@ -1,20 +1,19 @@
-package edu.jiahui.testcase.domain.request;
-
+package edu.jiahui.testcase.domain.response;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Data
-public class TestcaseReq {
+public class TestcaseRes {
 
-    @NotBlank(message = "testcaseName不能为空")
+    private Integer id;
+
     private String testcaseName;
 
-    @NotNull(message = "envId不能为空")
     private Integer envId;
 
     private String configIds;
@@ -41,13 +40,10 @@ public class TestcaseReq {
 
         private Integer id;
 
-        @NotBlank(message = "variable name不能为空")
         private String name;
 
-        @NotBlank(message = "variable type不能为空")
         private String type;
 
-        @NotBlank(message = "variable value不能为空")
         private String value;
 
         private Integer databaseId;
@@ -58,10 +54,8 @@ public class TestcaseReq {
 
         private Integer id;
 
-        @NotBlank(message = "parameter keyName不能为空")
         private String keyName;
 
-        @NotBlank(message = "parameter value不能为空")
         private String value;
     }
 
@@ -70,10 +64,8 @@ public class TestcaseReq {
 
         private Integer id;
 
-        @NotBlank(message = "setuphook sql不能为空")
         private String sql;
 
-        @NotNull(message = "setuphook databaseId不能为空")
         private Integer databaseId;
     }
 
@@ -82,10 +74,8 @@ public class TestcaseReq {
 
         private Integer id;
 
-        @NotBlank(message = "reqHeader keyName不能为空")
         private String keyName;
 
-        @NotBlank(message = "reqHeader value不能为空")
         private String value;
     }
 
@@ -94,10 +84,8 @@ public class TestcaseReq {
 
         private Integer id;
 
-        @NotBlank(message = "reqParam keyName不能为空")
         private String keyName;
 
-        @NotBlank(message = "reqParam value不能为空")
         private String value;
     }
 
@@ -106,16 +94,12 @@ public class TestcaseReq {
 
         private Integer id;
 
-        @NotBlank(message = "response name不能为空")
         private String name;
 
-        @NotBlank(message = "response type不能为空")
         private String type;
 
-        @NotBlank(message = "response comparator不能为空")
         private String comparator;
 
-        @NotBlank(message = "response expectedValue不能为空")
         private String expectedValue;
     }
 }

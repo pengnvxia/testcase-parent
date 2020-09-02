@@ -44,4 +44,5 @@
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from interfaces where id=#{id}
   </delete>
+
 </mapper>
