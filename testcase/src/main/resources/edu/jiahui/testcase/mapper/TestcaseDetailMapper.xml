@@ -53,14 +53,14 @@
   </select>
 
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
-    update testcaseDetail set scope=#{scope},type=#{type},name=#{name},value=#{value},database_id=#{databaseId},comparator=#{comparator},
+    update testcase_detail set scope=#{scope},type=#{type},name=#{name},value=#{value},database_id=#{databaseId},comparator=#{comparator},
     expected_value=#{expectedValue} where id=#{id}
   </update>
 
   <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseDetail" useGeneratedKeys="true" keyProperty="id">
-        insert into testcaseDetail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value)
+        insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value)
         values
-        (#{item.scope},#{item.type},#{item.name},#{item.propertiesId},#{item.value},#{item.databaseId},#{item.testcaseId},#{item.comparator},#{item.expectedValue})
+        (#{scope},#{type},#{name},#{propertiesId},#{value},#{databaseId},#{testcaseId},#{comparator},#{expectedValue})
   </insert>
 
   <delete id="deleteByTestcaseId" parameterType="java.lang.Integer">
@@ -69,9 +69,11 @@
 
   <delete id="deleteNotIn" parameterType="java.lang.Integer">
     delete from testcase_detail where testcase_id=#{testcaseId} and scope=#{scope}
+    <if test="ids!=null">
     and id not in
-    <foreach collection="list" item="id" open="(" separator="," close=")">
-      #{ids}
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
     </foreach>
+    </if>
   </delete>
 </mapper>

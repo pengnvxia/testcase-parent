@@ -1,4 +1,5 @@
 package edu.jiahui.testcase.domain.response;
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

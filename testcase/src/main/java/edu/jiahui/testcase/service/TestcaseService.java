@@ -201,11 +201,13 @@ public class TestcaseService {
         testcase.setTestcaseName(req.getTestcaseName());
         testcase.setEnvId(req.getEnvId());
         testcase.setConfigIds(req.getConfigIds());
+        testcase.setId(id);
         testcaseMapper.updateByPrimaryKey(testcase);
         if(req.getVariables()!=null && req.getVariables().size()>0){
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Variable variable:req.getVariables()){
                 TestcaseDetail testcaseDetail= new TestcaseDetail();
+                testcaseDetail.setScope("variables");
                 testcaseDetail.setName(variable.getName());
                 testcaseDetail.setValue(variable.getValue());
                 testcaseDetail.setType(variable.getType());
@@ -215,6 +217,7 @@ public class TestcaseService {
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
                     ids.add(variable.getId());
                 }else {
+                    testcaseDetail.setTestcaseId(id);
                     testcaseDetailMapper.insertOne(testcaseDetail);
                     ids.add(testcaseDetail.getId());
                 }
@@ -228,6 +231,7 @@ public class TestcaseService {
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Parameter parameter:req.getParameters()){
                 TestcaseDetail testcaseDetail= new TestcaseDetail();
+                testcaseDetail.setScope("parameters");
                 testcaseDetail.setName(parameter.getKeyName());
                 testcaseDetail.setValue(parameter.getValue());
                 if(parameter.getId()!=null){
@@ -235,6 +239,7 @@ public class TestcaseService {
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
                     ids.add(parameter.getId());
                 }else {
+                    testcaseDetail.setTestcaseId(id);
                     testcaseDetailMapper.insertOne(testcaseDetail);
                     ids.add(testcaseDetail.getId());
                 }
@@ -248,6 +253,7 @@ public class TestcaseService {
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Setuphook setuphook:req.getSetuphooks()){
                 TestcaseDetail testcaseDetail= new TestcaseDetail();
+                testcaseDetail.setScope("setupHooks");
                 testcaseDetail.setValue(setuphook.getSql());
                 testcaseDetail.setDatabaseId(setuphook.getDatabaseId());
                 if(setuphook.getId()!=null){
@@ -255,6 +261,7 @@ public class TestcaseService {
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
                     ids.add(setuphook.getId());
                 }else {
+                    testcaseDetail.setTestcaseId(id);
                     testcaseDetailMapper.insertOne(testcaseDetail);
                     ids.add(testcaseDetail.getId());
                 }
@@ -268,6 +275,7 @@ public class TestcaseService {
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.ReqHeader reqHeader:req.getReqHeaders()){
                 TestcaseDetail testcaseDetail= new TestcaseDetail();
+                testcaseDetail.setScope("reqHeaders");
                 testcaseDetail.setName(reqHeader.getKeyName());
                 testcaseDetail.setValue(reqHeader.getValue());
                 if(reqHeader.getId()!=null){
@@ -275,6 +283,7 @@ public class TestcaseService {
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
                     ids.add(reqHeader.getId());
                 }else {
+                    testcaseDetail.setTestcaseId(id);
                     testcaseDetailMapper.insertOne(testcaseDetail);
                     ids.add(testcaseDetail.getId());
                 }
@@ -288,6 +297,7 @@ public class TestcaseService {
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.ReqParam reqParam:req.getReqParams()){
                 TestcaseDetail testcaseDetail= new TestcaseDetail();
+                testcaseDetail.setScope("reqParams");
                 testcaseDetail.setName(reqParam.getKeyName());
                 testcaseDetail.setValue(reqParam.getValue());
                 if(reqParam.getId()!=null){
@@ -295,6 +305,7 @@ public class TestcaseService {
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
                     ids.add(reqParam.getId());
                 }else {
+                    testcaseDetail.setTestcaseId(id);
                     testcaseDetailMapper.insertOne(testcaseDetail);
                     ids.add(testcaseDetail.getId());
                 }
@@ -308,6 +319,7 @@ public class TestcaseService {
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Response response:req.getResponses()){
                 TestcaseDetail testcaseDetail= new TestcaseDetail();
+                testcaseDetail.setScope("response");
                 testcaseDetail.setName(response.getName());
                 testcaseDetail.setType(response.getType());
                 testcaseDetail.setExpectedValue(response.getExpectedValue());
@@ -317,6 +329,7 @@ public class TestcaseService {
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
                     ids.add(response.getId());
                 }else {
+                    testcaseDetail.setTestcaseId(id);
                     testcaseDetailMapper.insertOne(testcaseDetail);
                     ids.add(testcaseDetail.getId());
                 }
@@ -329,10 +342,12 @@ public class TestcaseService {
         if(req.getReqBody()!=null){
             TestcaseDetail testcaseDetail= new TestcaseDetail();
             testcaseDetail.setValue(req.getReqBody().get("requestBody").toString());
+            testcaseDetail.setScope("requestBody");
             if(req.getReqBody().containsKey("id")){
                 testcaseDetail.setId(Integer.parseInt(req.getReqBody().get("id").toString()));
                 testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
             }else {
+                testcaseDetail.setTestcaseId(id);
                 testcaseDetailMapper.insertOne(testcaseDetail);
             }
         }
