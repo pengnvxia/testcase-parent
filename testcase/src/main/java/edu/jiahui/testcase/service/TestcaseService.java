@@ -1,20 +1,20 @@
 package edu.jiahui.testcase.service;
 
-import edu.jiahui.testcase.domain.Testcase;
-import edu.jiahui.testcase.domain.TestcaseDetail;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.testcase.constants.BaseConstans;
+import edu.jiahui.testcase.domain.*;
+import edu.jiahui.testcase.domain.request.RunTestcaseReq;
 import edu.jiahui.testcase.domain.request.TestcaseReq;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
-import edu.jiahui.testcase.mapper.TestcaseDetailMapper;
-import edu.jiahui.testcase.mapper.TestcaseMapper;
-import jnr.ffi.annotations.In;
+import edu.jiahui.testcase.mapper.*;
 import org.springframework.stereotype.Service;
+import sun.rmi.log.LogInputStream;
 
 import javax.annotation.Resource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TestcaseService {
@@ -24,6 +24,15 @@ public class TestcaseService {
 
     @Resource
     private TestcaseDetailMapper testcaseDetailMapper;
+
+    @Resource
+    private TestcaseConfigMapper testcaseConfigMapper;
+
+    @Resource
+    private TestcaseConfigDetailMapper testcaseConfigDetailMapper;
+
+    @Resource
+    private ProjectMapper projectMapper;
 
     public void addTestcase(Integer id,TestcaseReq req){
         Testcase testcase = new Testcase();
@@ -357,6 +366,182 @@ public class TestcaseService {
         testcaseDetailMapper.deleteByTestcaseId(id);
         testcaseMapper.deleteByPrimaryKey(id);
     }
+
+    public List runTestcaseList(RunTestcaseReq req){
+        List lista=new ArrayList();
+        if(req.getTestcaseIds().size()<=0){
+            throw (new ClientException(BaseConstans.BUSI_CODE.NOT_RUN_CASE.getCode(),BaseConstans.BUSI_CODE.NOT_RUN_CASE.getMsg()));
+        }else {
+            for(Integer testcaseId:req.getTestcaseIds()){
+                lista=runTestcase(req.getEnvId(),req.getProjectId(),testcaseId);
+            }
+        }
+        return lista;
+    }
+
+
+    public List runTestcase(Integer envId,Integer projectId,Integer testcaseId){
+        Project project = projectMapper.selectByPrimaryKey(projectId);
+        String baseUrl = envId==1 ? project.getDevAddress():project.getProdAddress();
+        Testcase testcase = testcaseMapper.selectByPrimaryKey(testcaseId);
+        JSONObject totalVariableJson = new JSONObject();
+        if(testcase.getConfigIds()!=null && testcase.getConfigIds().length()>0){
+            List<String> configIdsList = Arrays.asList(testcase.getConfigIds());
+            for(String configId: configIdsList){
+                List<TestcaseConfigDetail> testcaseConfigDetailList = testcaseConfigDetailMapper.selectByConfigId(Integer.parseInt(configId));
+                for(TestcaseConfigDetail testcaseConfigDetail: testcaseConfigDetailList){
+                    totalVariableJson.put(testcaseConfigDetail.getName(),testcaseConfigDetail.getValue().toString());
+                }
+            }
+        }
+
+        List<TestcaseDetail> testcaseDetailList = testcaseDetailMapper.selectByTestcaseId(testcaseId);
+        JSONObject variablesJson= new JSONObject();
+        JSONObject reqHeadersJson= new JSONObject();
+        JSONObject reqParamsJson= new JSONObject();
+        JSONObject requestBodyJson= new JSONObject();
+        JSONObject configParametersJson= new JSONObject();
+        List validateList = new ArrayList();
+        if(testcaseDetailList.size()<=0){
+            throw (new ClientException(BaseConstans.BUSI_CODE.CASEDETAIL_NOT_EXIT.getCode(),BaseConstans.BUSI_CODE.CASEDETAIL_NOT_EXIT.getMsg()));
+        }else {
+            for(TestcaseDetail testcaseDetail: testcaseDetailList){
+                if(testcaseDetail.getScope().equals("setupHooks")){
+                    //执行sql
+                }
+
+                if(testcaseDetail.getScope().equals("parameters")){
+                    //设置多个用例
+
+//                    configParametersJson.put(testcaseDetail.getName(),JSON.parseArray(testcaseDetail.getValue(),String.class));
+                    configParametersJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
+                }
+
+                if(testcaseDetail.getScope().equals("variables")){
+                    if(testcaseDetail.getType()=="sql"){
+//                        执行后赋值
+                    }else {
+                        variablesJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
+                    }
+                }
+
+                if(testcaseDetail.getScope().equals("reqHeaders")){
+                    reqHeadersJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
+                }
+
+                if(testcaseDetail.getScope().equals("reqParams")){
+                    reqParamsJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
+                }
+
+                if(testcaseDetail.getScope().equals("response")){
+                    JSONObject item = new JSONObject();
+                    String type = null;
+                    switch (testcaseDetail.getComparator()){
+                        case "=":
+                            type="eq";
+                            break;
+                        case ">":
+                            type="gt";
+                            break;
+                        case "<":
+                            type="lt";
+                            break;
+                        case ">=":
+                            type="ge";
+                            break;
+                        case "<=":
+                            type="le";
+                            break;
+                        case "!=":
+                            type="ne";
+                            break;
+                        case "contain":
+                            type="contains";
+                            break;
+                    }
+
+                    List actualExceptedList =new ArrayList();
+                    actualExceptedList.add(nameJoint(testcaseDetail.getId()));
+                    actualExceptedList.add(testcaseDetail.getExpectedValue());
+                    item.put(type,actualExceptedList);
+                    validateList.add(item);
+                }
+                if(testcaseDetail.getScope().equals("requestBody")){
+                    requestBodyJson = JSON.parseObject(testcaseDetail.getValue());
+
+                }
+            }
+        }
+
+        JSONObject configJson = new JSONObject();
+        configJson.put("name",testcase.getTestcaseName());
+        configJson.put("id",testcase.getTestcaseName());
+        configJson.put("variables",totalVariableJson);
+        configJson.put("base_url",baseUrl);
+        configJson.put("parameters",configParametersJson);
+
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("headers",reqHeadersJson);
+        requestJson.put("json",requestBodyJson);
+        requestJson.put("method",testcase.getMethod());
+        requestJson.put("url",testcase.getUrl());
+        requestJson.put("params",reqParamsJson);
+
+
+
+        JSONObject testJson = new JSONObject();
+        testJson.put("name", testcase.getTestcaseName());
+        testJson.put("request",requestJson);
+        testJson.put("validate",validateList);
+        testJson.put("variables",variablesJson);
+
+
+        JSONObject testcaseConfigJson= new JSONObject();
+        testcaseConfigJson.put("config",configJson);
+
+        JSONObject testcaseTestJson= new JSONObject();
+        testcaseTestJson.put("test",testJson);
+
+        List testcaseList= new ArrayList();
+        testcaseList.add(testcaseConfigJson);
+        testcaseList.add(testcaseTestJson);
+        return testcaseList;
+
+
+    }
+
+    public String nameJoint(Integer id){
+        TestcaseDetail testcaseDetail = testcaseDetailMapper.selectByPrimaryKey(id);
+
+        if(testcaseDetail.getParentId()!=null){
+            if(testcaseDetail.getArrayIndex()!=null){
+                return nameJoint(testcaseDetail.getParentId())+"."+testcaseDetail.getArrayIndex().toString()+"."+testcaseDetail.getName();
+            }else {
+                return nameJoint(testcaseDetail.getParentId())+"."+testcaseDetail.getName();
+            }
+        }else {
+            return "content."+testcaseDetail.getName();
+        }
+
+//        if(!(name== null && (testcaseDetail.getType().equals("Object") || testcaseDetail.getType().equals("Array")))){
+//            if(testcaseDetail.getParentId()!=null){
+//            if(testcaseDetail.getArrayIndex()!=null){
+//                return nameJoint(testcaseDetail.getParentId(),name)+"."+testcaseDetail.getArrayIndex().toString()+"."+testcaseDetail.getName();
+//            }else {
+//                return nameJoint(testcaseDetail.getParentId(),name)+"."+testcaseDetail.getName();
+//            }
+//        }else {
+//            return "content."+testcaseDetail.getName();
+//        }
+//        }
+//        return name;
+    }
+
+
+
+
+
+
 
 //    @Resource
 //    private TestcaseMapper testcaseMapper;

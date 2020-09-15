@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Data
 public class TestcaseDetail {
+
     private Integer id;
 
     private String scope;
@@ -33,5 +34,9 @@ public class TestcaseDetail {
     private String comparator;
 
     private String expectedValue;
+
+    private Integer parentId;
+
+    private Integer arrayIndex;
 
 }

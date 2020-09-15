@@ -25,4 +25,8 @@ public class Testcase {
     private Integer testcaseGroupId;
 
     private Integer interfaceId;
+
+    private String method;
+
+    private String url;
 }

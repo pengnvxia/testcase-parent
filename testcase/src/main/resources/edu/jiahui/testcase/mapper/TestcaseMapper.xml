@@ -12,6 +12,8 @@
     <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
     <result column="testcase_group_id" property="testcaseGroupId" jdbcType="INTEGER" />
     <result column="interface_id" property="interfaceId" jdbcType="INTEGER" />
+    <result column="method" property="method" jdbcType="VARCHAR" />
+    <result column="url" property="method" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, testcase_name, env_id, config_ids, created_at, updated_at, created_by, updated_by,

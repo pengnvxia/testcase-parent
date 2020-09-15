@@ -13,4 +13,5 @@ public interface TestcaseDetailMapper {
     void updateByPrimaryKey(TestcaseDetail testcaseDetail);
     void insertOne(TestcaseDetail testcaseDetail);
     void deleteNotIn(@Param("ids") List<Integer> ids,Integer testcaseId,String scope);
+//    String selectByParentId(Integer parentId);
 }

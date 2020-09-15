@@ -2,6 +2,7 @@ package edu.jiahui.testcase.controller;
 
 import edu.jiahui.framework.util.ResultCode;
 import edu.jiahui.testcase.domain.request.CreateTestcaseReq;
+import edu.jiahui.testcase.domain.request.RunTestcaseReq;
 import edu.jiahui.testcase.domain.request.TestcaseReq;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.service.PropertiesService;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -82,6 +85,20 @@ public class TestcaseController {
         }
         return ResultCode.getSuccessReturn(null,"更新成功！",null);
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/run")
+    public ResultCode runTestcase(@RequestBody @Valid RunTestcaseReq req){
+        List testcaseList= new ArrayList();
+        try{
+            testcaseList=testcaseService.runTestcaseList(req);
+        }catch (Exception e){
+            log.error("运行用例失败{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，请稍后重试!");
+        }
+        return ResultCode.getSuccessReturn(null,null,testcaseList);
+    }
+
+
 
 //    @RequestMapping(method = RequestMethod.POST, value = "/create/testcase")
 //    public ResultCode<List<String>> createTestcase(@RequestBody @Valid CreateTestcaseReq req){

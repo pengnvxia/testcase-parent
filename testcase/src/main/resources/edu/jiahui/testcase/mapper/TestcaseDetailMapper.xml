@@ -16,11 +16,13 @@
     <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
     <result column="comparator" property="comparator" jdbcType="CHAR" />
     <result column="expected_value" property="expectedValue" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="array_index" property="arrayIndex" jdbcType="INTEGER" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     id, scope, type, name, properties_id, value, database_id, testcase_id, created_at,
-    updated_at, created_by, updated_by
+    updated_at, created_by, updated_by,comparator,expected_value,parent_id,array_index
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -52,6 +54,10 @@
         where testcase_id=#{testcaseId}
   </select>
 
+  <select id="selectByParentId" parameterType="java.lang.String">
+    select name from testcaseDetail where parent_id=#{parentId}
+  </select>
+
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
     update testcase_detail set scope=#{scope},type=#{type},name=#{name},value=#{value},database_id=#{databaseId},comparator=#{comparator},
     expected_value=#{expectedValue} where id=#{id}
@@ -76,4 +82,5 @@
     </foreach>
     </if>
   </delete>
+
 </mapper>
