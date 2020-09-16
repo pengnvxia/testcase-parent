@@ -9,11 +9,12 @@ import edu.jiahui.testcase.domain.request.RunTestcaseReq;
 import edu.jiahui.testcase.domain.request.TestcaseReq;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.mapper.*;
+
 import org.springframework.stereotype.Service;
-import sun.rmi.log.LogInputStream;
 
 import javax.annotation.Resource;
 
+import java.io.*;
 import java.util.*;
 
 @Service
@@ -33,6 +34,9 @@ public class TestcaseService {
 
     @Resource
     private ProjectMapper projectMapper;
+
+    @Resource
+    private ReportMapper reportMapper;
 
     public void addTestcase(Integer id,TestcaseReq req){
         Testcase testcase = new Testcase();
@@ -461,10 +465,13 @@ public class TestcaseService {
                     }
 
                     List actualExceptedList =new ArrayList();
-                    actualExceptedList.add(nameJoint(testcaseDetail.getId()));
-                    actualExceptedList.add(testcaseDetail.getExpectedValue());
-                    item.put(type,actualExceptedList);
-                    validateList.add(item);
+                    List <String> resultList = nameJoint(testcaseDetail.getId());
+                    if(!resultList.get(0).equals("Object") && !resultList.get(0).equals("Array")){
+                        actualExceptedList.add(resultList.get(1));
+                        actualExceptedList.add(testcaseDetail.getExpectedValue());
+                        item.put(type,actualExceptedList);
+                        validateList.add(item);
+                    }
                 }
                 if(testcaseDetail.getScope().equals("requestBody")){
                     requestBodyJson = JSON.parseObject(testcaseDetail.getValue());
@@ -505,39 +512,79 @@ public class TestcaseService {
         List testcaseList= new ArrayList();
         testcaseList.add(testcaseConfigJson);
         testcaseList.add(testcaseTestJson);
+//        createTestcaseYaml(project.getProjectName(),testcase.getTestcaseName(),testcaseList);
+        String reportContent = execTestcase(project.getProjectName(),testcase.getTestcaseName());
+        Report report = Report.builder().testcaseId(testcaseId).content(reportContent).build();
+        reportMapper.insert(report);
         return testcaseList;
 
 
     }
 
-    public String nameJoint(Integer id){
+    //逐级拼接response中的名称
+    public List<String> nameJoint(Integer id){
         TestcaseDetail testcaseDetail = testcaseDetailMapper.selectByPrimaryKey(id);
 
         if(testcaseDetail.getParentId()!=null){
             if(testcaseDetail.getArrayIndex()!=null){
-                return nameJoint(testcaseDetail.getParentId())+"."+testcaseDetail.getArrayIndex().toString()+"."+testcaseDetail.getName();
+                List resultList = new ArrayList();
+                String type = testcaseDetail.getType();
+                String name = nameJoint(testcaseDetail.getParentId()).get(1)+"."+testcaseDetail.getArrayIndex().toString()+"."+testcaseDetail.getName();
+                resultList.add(type);
+                resultList.add(name);
+                return resultList;
             }else {
-                return nameJoint(testcaseDetail.getParentId())+"."+testcaseDetail.getName();
+                List resultList = new ArrayList();
+                String type = testcaseDetail.getType();
+                String name = nameJoint(testcaseDetail.getParentId()).get(1)+"."+testcaseDetail.getName();
+                resultList.add(type);
+                resultList.add(name);
+                return resultList;
             }
         }else {
-            return "content."+testcaseDetail.getName();
+            List resultList = new ArrayList();
+            String type = testcaseDetail.getType();
+            String name = "content."+testcaseDetail.getName();
+            resultList.add(type);
+            resultList.add(name);
+            return resultList;
         }
-
-//        if(!(name== null && (testcaseDetail.getType().equals("Object") || testcaseDetail.getType().equals("Array")))){
-//            if(testcaseDetail.getParentId()!=null){
-//            if(testcaseDetail.getArrayIndex()!=null){
-//                return nameJoint(testcaseDetail.getParentId(),name)+"."+testcaseDetail.getArrayIndex().toString()+"."+testcaseDetail.getName();
-//            }else {
-//                return nameJoint(testcaseDetail.getParentId(),name)+"."+testcaseDetail.getName();
-//            }
-//        }else {
-//            return "content."+testcaseDetail.getName();
-//        }
-//        }
-//        return name;
     }
 
+    public void createTestcaseYaml(String projectName,String testcaseName,List caseList){
+        try {
+            String[] args = new String[]{"python3", "/Users/pengyishuang/Desktop/mypro01/create_yaml.py", projectName, testcaseName, JSON.toJSONString(caseList)};
+            Process proc = Runtime.getRuntime().exec(args);
 
+            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+//                if (String.valueOf(in.readLine()).equals("ok")) {
+//                    result = "0";
+//                }
+            in.close();
+            proc.waitFor();
+        }catch (IOException e){
+            e.printStackTrace();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
+    public String execTestcase(String projectName,String testcaseName){
+        String reportContent = null;
+        try{
+            String[] args = new String[]{"python3", "/Users/pengyishuang/Desktop/mypro01/run_test.py", projectName, testcaseName};
+            Process proc = Runtime.getRuntime().exec(args);
+            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            reportContent = String.valueOf(in.readLine());
+            in.close();
+            proc.waitFor();
+        }catch (IOException e){
+            e.printStackTrace();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        return reportContent;
+    }
 
 
 
