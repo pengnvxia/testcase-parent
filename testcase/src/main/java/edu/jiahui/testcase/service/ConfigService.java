@@ -1,9 +1,7 @@
 package edu.jiahui.testcase.service;
 
-import edu.jiahui.testcase.domain.Database;
 import edu.jiahui.testcase.domain.TestcaseConfig;
 import edu.jiahui.testcase.mapper.TestcaseConfigMapper;
-import edu.jiahui.testcase.model.bo.DbBo;
 import edu.jiahui.testcase.model.bo.TestcaseConfigBo;
 import org.springframework.stereotype.Service;
 

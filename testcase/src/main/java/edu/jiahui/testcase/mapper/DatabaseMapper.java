@@ -1,9 +1,7 @@
 package edu.jiahui.testcase.mapper;
-import edu.jiahui.testcase.domain.Database;
 
-import java.util.List;
-
+import edu.jiahui.testcase.domain.DatabaseWithBLOBs;
 
 public interface DatabaseMapper {
-    List<Database> select();
+    DatabaseWithBLOBs selectByPrimaryKey(Integer id);
 }

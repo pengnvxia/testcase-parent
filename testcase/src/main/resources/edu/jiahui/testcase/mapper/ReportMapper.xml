@@ -9,12 +9,13 @@
     <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
     <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="result" property="result" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="edu.jiahui.testcase.domain.Report" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, testcase_id, group_id, created_by, updated_by, created_at, updated_at
+    id, testcase_id, group_id, created_by, updated_by, created_at, updated_at, result
   </sql>
   <sql id="Blob_Column_List" >
     content
@@ -28,6 +29,6 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Report">
-    insert report (testcase_id,group_id,content) values (#{testcaseId},#{groupId},#{content})
+    insert report (testcase_id,group_id,content,result) values (#{testcaseId},#{groupId},#{content},#{result})
   </insert>
 </mapper>

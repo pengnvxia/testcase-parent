@@ -2,19 +2,29 @@ package edu.jiahui.testcase.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+//import com.google.gson.JsonObject;
+//import com.google.gson.annotations.JsonAdapter;
+//import com.spotify.docker.client.DockerCertificateException;
+//import com.spotify.docker.client.DockerException;
 import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.framework.httpclient.HttpClientTemplate;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.domain.*;
 import edu.jiahui.testcase.domain.request.RunTestcaseReq;
 import edu.jiahui.testcase.domain.request.TestcaseReq;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.mapper.*;
-
+import edu.jiahui.testcase.utils.DockerUtil;
+import edu.jiahui.testcase.utils.JDBCUtil;
 import org.springframework.stereotype.Service;
+import sun.net.www.http.HttpClient;
 
 import javax.annotation.Resource;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 @Service
@@ -37,6 +47,12 @@ public class TestcaseService {
 
     @Resource
     private ReportMapper reportMapper;
+
+    @Resource
+    private DatabaseMapper databaseMapper;
+
+    @Resource
+    private HttpClientTemplate httpClientTemplate;
 
     public void addTestcase(Integer id,TestcaseReq req){
         Testcase testcase = new Testcase();
@@ -484,7 +500,9 @@ public class TestcaseService {
         configJson.put("name",testcase.getTestcaseName());
         configJson.put("id",testcase.getTestcaseName());
         configJson.put("variables",totalVariableJson);
-        configJson.put("base_url",baseUrl);
+        JSONObject baseUrlJson = new JSONObject();
+        baseUrlJson.put("base_url",baseUrl);
+        configJson.put("request",baseUrlJson);
         configJson.put("parameters",configParametersJson);
 
         JSONObject requestJson = new JSONObject();
@@ -512,9 +530,11 @@ public class TestcaseService {
         List testcaseList= new ArrayList();
         testcaseList.add(testcaseConfigJson);
         testcaseList.add(testcaseTestJson);
-//        createTestcaseYaml(project.getProjectName(),testcase.getTestcaseName(),testcaseList);
+        createTestcaseYaml(project.getProjectName(),testcase.getTestcaseName(),testcaseList);
         String reportContent = execTestcase(project.getProjectName(),testcase.getTestcaseName());
-        Report report = Report.builder().testcaseId(testcaseId).content(reportContent).build();
+        Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
+        Integer result = status ? 1 : 0;
+        Report report = Report.builder().testcaseId(testcaseId).content(reportContent).result(result).build();
         reportMapper.insert(report);
         return testcaseList;
 
@@ -575,7 +595,12 @@ public class TestcaseService {
             String[] args = new String[]{"python3", "/Users/pengyishuang/Desktop/mypro01/run_test.py", projectName, testcaseName};
             Process proc = Runtime.getRuntime().exec(args);
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            reportContent = String.valueOf(in.readLine());
+            String line;
+            while((line=in.readLine())!=null){
+                if(line.startsWith("{")){
+                    reportContent=line;
+                }
+            }
             in.close();
             proc.waitFor();
         }catch (IOException e){
@@ -586,8 +611,52 @@ public class TestcaseService {
         return reportContent;
     }
 
+    public String createMysql(String imageName){
 
+//          String res= httpClientTemplate.doPost("http://127.0.0.1:2375/containers/create?name=mysql:5.7",(Object)null);
+//        String res= httpClientTemplate.doGet("http://127.0.0.1:2375/containers/json");
+//        DockerUtil dockerUtil = new DockerUtil();
+//        String containerId = dockerUtil.createContainer(imageName);
+//        return containerId;
+//        return res;
+//        String aaa = dockerUtil.inspect(imageName).toString();
+        return "aaa";
+    }
 
+    public void initDatabase(Integer id){
+        DatabaseWithBLOBs database= databaseMapper.selectByPrimaryKey(id);
+        try{
+            createDatabase(database.getDbName());
+        } catch (SQLException e){
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            if(database.getCreateTableSql()!=null){
+                createTable(database.getDbName(),database.getCreateTableSql());
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void createDatabase(String dbName) throws SQLException {
+        Connection conn = JDBCUtil.getConnection("");
+        String createDbSql = "create database " + dbName;
+        PreparedStatement pst = conn.prepareStatement(createDbSql);
+        pst.executeUpdate();
+        JDBCUtil.close(pst, conn);
+    }
+
+    public void createTable(String dbName,String createTableSql) throws SQLException {
+        Connection conn = JDBCUtil.getConnection(dbName);
+        PreparedStatement pst = conn.prepareStatement(createTableSql);
+        pst.executeUpdate();
+        JDBCUtil.close(pst, conn);
+    }
 
 
 //    @Resource

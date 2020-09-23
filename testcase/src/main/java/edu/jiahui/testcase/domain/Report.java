@@ -23,4 +23,6 @@ public class Report {
     private Date updatedAt;
 
     private String content;
+
+    private Integer result;
 }

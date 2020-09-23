@@ -98,7 +98,27 @@ public class TestcaseController {
         return ResultCode.getSuccessReturn(null,null,testcaseList);
     }
 
+//    @RequestMapping(method = RequestMethod.GET,value = "/docker/{imageName}")
+//    public ResultCode createContainer(@PathVariable("imageName")String imageName){
+//        String containerId = null;
+//        try{
+//            containerId = testcaseService.createDb(imageName);
+//        }catch (Exception e){
+//            return ResultCode.getFailure(null,e.getMessage());
+//        }
+//        return ResultCode.getSuccessReturn(null,null,containerId);
+//    }
 
+
+    @RequestMapping(method = RequestMethod.GET,value = "/initDatabase/{id}")
+    public ResultCode initDatabase(@PathVariable("id")Integer id ){
+        try {
+            testcaseService.initDatabase(id);
+        }catch (Exception e){
+            return ResultCode.getFailure(null,e.getMessage());
+        }
+        return ResultCode.getSuccessReturn(null,null,"操作成功！");
+    }
 
 //    @RequestMapping(method = RequestMethod.POST, value = "/create/testcase")
 //    public ResultCode<List<String>> createTestcase(@RequestBody @Valid CreateTestcaseReq req){
