@@ -12,4 +12,6 @@ public class RunTestcaseReq {
     private Integer projectId;
 
     private List<Integer> testcaseIds;
+
+    private Integer flag;
 }

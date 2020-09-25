@@ -1,7 +1,7 @@
 package edu.jiahui.testcase.mapper;
 
 import edu.jiahui.testcase.domain.TestcaseDetail;
-import feign.Param;
+import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TestcaseDetailMapper {

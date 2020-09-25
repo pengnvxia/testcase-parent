@@ -9,15 +9,16 @@ import com.alibaba.fastjson.JSONObject;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.httpclient.HttpClientTemplate;
 import edu.jiahui.testcase.constants.BaseConstans;
+import edu.jiahui.testcase.constants.DockerConstants;
+import edu.jiahui.testcase.constants.PythonConstants;
 import edu.jiahui.testcase.domain.*;
 import edu.jiahui.testcase.domain.request.RunTestcaseReq;
 import edu.jiahui.testcase.domain.request.TestcaseReq;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.mapper.*;
-import edu.jiahui.testcase.utils.DockerUtil;
 import edu.jiahui.testcase.utils.JDBCUtil;
+import edu.jiahui.testcase.utils.ShellUtil;
 import org.springframework.stereotype.Service;
-import sun.net.www.http.HttpClient;
 
 import javax.annotation.Resource;
 
@@ -29,6 +30,12 @@ import java.util.*;
 
 @Service
 public class TestcaseService {
+
+    @Resource
+    private DockerConstants dockerConstants;
+
+    @Resource
+    private PythonConstants pythonConstants;
 
     @Resource
     private TestcaseMapper testcaseMapper;
@@ -52,7 +59,11 @@ public class TestcaseService {
     private DatabaseMapper databaseMapper;
 
     @Resource
+    private TestcaseDbMapper testcaseDbMapper;
+
+    @Resource
     private HttpClientTemplate httpClientTemplate;
+
 
     public void addTestcase(Integer id,TestcaseReq req){
         Testcase testcase = new Testcase();
@@ -393,14 +404,19 @@ public class TestcaseService {
             throw (new ClientException(BaseConstans.BUSI_CODE.NOT_RUN_CASE.getCode(),BaseConstans.BUSI_CODE.NOT_RUN_CASE.getMsg()));
         }else {
             for(Integer testcaseId:req.getTestcaseIds()){
-                lista=runTestcase(req.getEnvId(),req.getProjectId(),testcaseId);
+                runTestcase(req.getEnvId(),req.getProjectId(),testcaseId,req.getFlag());
             }
         }
         return lista;
     }
 
 
-    public List runTestcase(Integer envId,Integer projectId,Integer testcaseId){
+    public void runTestcase(Integer envId,Integer projectId,Integer testcaseId,Integer flag){
+        //初始化数据库
+        String testcaseDb= testcaseDbMapper.selectByTestcaseId(testcaseId);
+        List dbIds = JSON.parseArray(testcaseDb,String.class);
+        initDatabase(dbIds);
+        //拼接用例数据
         Project project = projectMapper.selectByPrimaryKey(projectId);
         String baseUrl = envId==1 ? project.getDevAddress():project.getProdAddress();
         Testcase testcase = testcaseMapper.selectByPrimaryKey(testcaseId);
@@ -484,7 +500,14 @@ public class TestcaseService {
                     List <String> resultList = nameJoint(testcaseDetail.getId());
                     if(!resultList.get(0).equals("Object") && !resultList.get(0).equals("Array")){
                         actualExceptedList.add(resultList.get(1));
-                        actualExceptedList.add(testcaseDetail.getExpectedValue());
+                        switch (resultList.get(0)){
+                            case "Number":
+                                actualExceptedList.add(Integer.parseInt(testcaseDetail.getExpectedValue()));
+                                break;
+                            default:
+                                actualExceptedList.add(testcaseDetail.getExpectedValue());
+                        }
+
                         item.put(type,actualExceptedList);
                         validateList.add(item);
                     }
@@ -530,15 +553,20 @@ public class TestcaseService {
         List testcaseList= new ArrayList();
         testcaseList.add(testcaseConfigJson);
         testcaseList.add(testcaseTestJson);
+        //创建可执行的yaml文件
         createTestcaseYaml(project.getProjectName(),testcase.getTestcaseName(),testcaseList);
+        //执行测试用例
         String reportContent = execTestcase(project.getProjectName(),testcase.getTestcaseName());
         Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
         Integer result = status ? 1 : 0;
         Report report = Report.builder().testcaseId(testcaseId).content(reportContent).result(result).build();
+        //报告数据落表
         reportMapper.insert(report);
-        return testcaseList;
-
-
+        //return testcaseList;
+        //删除镜像
+        if(flag!=null && flag==1){
+            deleteDatabase();
+        }
     }
 
     //逐级拼接response中的名称
@@ -573,7 +601,7 @@ public class TestcaseService {
 
     public void createTestcaseYaml(String projectName,String testcaseName,List caseList){
         try {
-            String[] args = new String[]{"python3", "/Users/pengyishuang/Desktop/mypro01/create_yaml.py", projectName, testcaseName, JSON.toJSONString(caseList)};
+            String[] args = new String[]{"python3", pythonConstants.pythonCreateYaml, projectName, testcaseName, JSON.toJSONString(caseList)};
             Process proc = Runtime.getRuntime().exec(args);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -592,7 +620,7 @@ public class TestcaseService {
     public String execTestcase(String projectName,String testcaseName){
         String reportContent = null;
         try{
-            String[] args = new String[]{"python3", "/Users/pengyishuang/Desktop/mypro01/run_test.py", projectName, testcaseName};
+            String[] args = new String[]{"python3", pythonConstants.pythonRunTest, projectName, testcaseName};
             Process proc = Runtime.getRuntime().exec(args);
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
@@ -623,24 +651,68 @@ public class TestcaseService {
         return "aaa";
     }
 
-    public void initDatabase(Integer id){
-        DatabaseWithBLOBs database= databaseMapper.selectByPrimaryKey(id);
+    public void initDatabase(List<Integer> ids){
+//        DatabaseWithBLOBs database= databaseMapper.selectByPrimaryKey(id);
+//        try{
+//            createDatabase(database.getDbName());
+//        } catch (SQLException e){
+//            e.printStackTrace();
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        try{
+//            if(database.getCreateTableSql()!=null){
+//                createTable(database.getDbName(),database.getCreateTableSql());
+//            }
+//        }catch (SQLException e){
+//            e.printStackTrace();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+        //创建初始化sql脚本
+        List<DatabaseWithBLOBs> databaseList= databaseMapper.selectByIds(ids);
+        FileOutputStream outputStream = null;
         try{
-            createDatabase(database.getDbName());
-        } catch (SQLException e){
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        try{
-            if(database.getCreateTableSql()!=null){
-                createTable(database.getDbName(),database.getCreateTableSql());
+            File file = new File(dockerConstants.dockerInitSqlPath);
+            if(file.exists()){
+                file.delete();
             }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }catch (Exception e){
-            e.printStackTrace();
+            file.createNewFile();
+            outputStream = new FileOutputStream(file,true);
+            for(DatabaseWithBLOBs database : databaseList){
+                if(database.getDbName()==null){
+                    throw (new ClientException(BaseConstans.BUSI_CODE.DBNAME_NOT_EXIT.getCode(),BaseConstans.BUSI_CODE.DBNAME_NOT_EXIT.getMsg()));
+                }else {
+                    outputStream.write(("CREATE DATABASE " + database.getDbName() + ";\n").getBytes());
+                    outputStream.write(("USE " + database.getDbName() + ";\n").getBytes());
+                }
+                if(database.getCreateTableSql()!=null){
+                    outputStream.write((database.getCreateTableSql()+ "\n").getBytes());
+                }
+                if(database.getInsertSql()!=null){
+                    outputStream.write((database.getInsertSql()+"\n").getBytes());
+                }
+            }
+        } catch (Exception e){
+            throw (new ClientException(null,e.getMessage()));
+        }finally {
+            try{
+                outputStream.close();
+            }catch (IOException e){
+                throw (new ClientException(null,e.getMessage()));
+            }
         }
+        //启动数据库
+        String shellUrl ="sh " + dockerConstants.shellPath;
+        Integer pid = ShellUtil.executeShellReturnexitValue(shellUrl);
+
+    }
+
+    //删除数据库镜像等操作
+    public void deleteDatabase(){
+        httpClientTemplate.doPost(dockerConstants.dockerIpPort + "/containers/mysqlc/stop",(Object)null);
+        httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/containers/mysqlc");
+        httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/images/mysql:5.7c");
     }
 
     public void createDatabase(String dbName) throws SQLException {
@@ -657,6 +729,7 @@ public class TestcaseService {
         pst.executeUpdate();
         JDBCUtil.close(pst, conn);
     }
+
 
 
 //    @Resource

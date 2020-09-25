@@ -88,14 +88,13 @@ public class TestcaseController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/run")
     public ResultCode runTestcase(@RequestBody @Valid RunTestcaseReq req){
-        List testcaseList= new ArrayList();
         try{
-            testcaseList=testcaseService.runTestcaseList(req);
+            testcaseService.runTestcaseList(req);
         }catch (Exception e){
             log.error("运行用例失败{}",e.getMessage());
             return ResultCode.getFailure(null,"服务器繁忙，请稍后重试!");
         }
-        return ResultCode.getSuccessReturn(null,null,testcaseList);
+        return ResultCode.getSuccessReturn(null,null,"操作成功！");
     }
 
 //    @RequestMapping(method = RequestMethod.GET,value = "/docker/{imageName}")
@@ -112,8 +111,10 @@ public class TestcaseController {
 
     @RequestMapping(method = RequestMethod.GET,value = "/initDatabase/{id}")
     public ResultCode initDatabase(@PathVariable("id")Integer id ){
+        List<Integer> ids = new ArrayList();
+        ids.add(1);
         try {
-            testcaseService.initDatabase(id);
+            testcaseService.initDatabase(ids);
         }catch (Exception e){
             return ResultCode.getFailure(null,e.getMessage());
         }

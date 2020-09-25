@@ -15,6 +15,7 @@ public class BaseConstans {
         CASE_EXIT("CASE001","存在用例"),
         NOT_RUN_CASE("CASE002","没有要运行的用例"),
         CASEDETAIL_NOT_EXIT("CASEDETAIL001","用例详细信息不存在"),
+        DBNAME_NOT_EXIT("DB001","数据库名称不存在"),
         ;
 
 
