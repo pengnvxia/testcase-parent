@@ -54,9 +54,12 @@
         where testcase_id=#{testcaseId}
   </select>
 
-  <select id="selectByParentId" parameterType="java.lang.String">
-    select name from testcaseDetail where parent_id=#{parentId}
+  <select id="selectByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+     from testcaseDetail where parent_id=#{parentId}
   </select>
+
 
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
     update testcase_detail set scope=#{scope},type=#{type},name=#{name},value=#{value},database_id=#{databaseId},comparator=#{comparator},
@@ -64,9 +67,9 @@
   </update>
 
   <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseDetail" useGeneratedKeys="true" keyProperty="id">
-        insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value)
+        insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value,parent_id,array_index)
         values
-        (#{scope},#{type},#{name},#{propertiesId},#{value},#{databaseId},#{testcaseId},#{comparator},#{expectedValue})
+        (#{scope},#{type},#{name},#{propertiesId},#{value},#{databaseId},#{testcaseId},#{comparator},#{expectedValue},#{parentId},#{arrayIndex})
   </insert>
 
   <delete id="deleteByTestcaseId" parameterType="java.lang.Integer">

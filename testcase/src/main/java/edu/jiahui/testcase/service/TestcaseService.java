@@ -129,18 +129,7 @@ public class TestcaseService {
                 testcaseDetailList.add(testcaseDetail);
             }
         }
-        if(req.getResponses()!=null && req.getResponses().size()>0){
-            for(TestcaseReq.Response response:req.getResponses()){
-                TestcaseDetail testcaseDetail = new TestcaseDetail();
-                testcaseDetail.setName(response.getName());
-                testcaseDetail.setType(response.getType());
-                testcaseDetail.setComparator(response.getComparator());
-                testcaseDetail.setExpectedValue(response.getExpectedValue());
-                testcaseDetail.setScope("response");
-                testcaseDetail.setTestcaseId(testcaseId);
-                testcaseDetailList.add(testcaseDetail);
-            }
-        }
+
         if(req.getRequestBody()!=null){
             String aa = req.getRequestBody().getClass().toString();
             TestcaseDetail testcaseDetail = new TestcaseDetail();
@@ -151,6 +140,46 @@ public class TestcaseService {
         }
 
         testcaseDetailMapper.insert(testcaseDetailList);
+
+        if(req.getResponses()!=null && req.getResponses().size()>0){
+            recursionResponse(req.getResponses(),testcaseId,null,false);
+//            for(TestcaseReq.Response response:req.getResponses()){
+//                TestcaseDetail testcaseDetail = new TestcaseDetail();
+//                testcaseDetail.setName(response.getName());
+//                testcaseDetail.setType(response.getType());
+//                testcaseDetail.setComparator(response.getComparator());
+//                testcaseDetail.setExpectedValue(response.getExpectedValue());
+//                testcaseDetail.setScope("response");
+//                testcaseDetail.setTestcaseId(testcaseId);
+//                testcaseDetailList.add(testcaseDetail);
+//            }
+        }
+    }
+
+    public void recursionResponse(List<TestcaseReq.Response> responseItemList,Integer testcaseId,Integer parentId,Boolean flag){
+        Integer i=0;
+        for(TestcaseReq.Response responseItem: responseItemList){
+            TestcaseDetail testcaseDetail = new TestcaseDetail();
+            testcaseDetail.setName(responseItem.getName());
+            testcaseDetail.setType(responseItem.getType());
+            testcaseDetail.setComparator(responseItem.getComparator());
+            testcaseDetail.setExpectedValue(responseItem.getExpectedValue());
+            testcaseDetail.setScope("response");
+            testcaseDetail.setTestcaseId(testcaseId);
+            testcaseDetail.setParentId(parentId);
+            if(flag){
+                testcaseDetail.setArrayIndex(i);
+            }
+            testcaseDetailMapper.insertOne(testcaseDetail);
+//            testcaseDetailList.add(testcaseDetail);
+            if(responseItem.getChildren()!=null){
+                if(responseItem.getType().equals("Array")){
+                    flag=true;
+                }
+                recursionResponse(responseItem.getChildren(),testcaseId,testcaseDetail.getId(),flag);
+            }
+            i=i+1;
+        }
     }
 
     public TestcaseRes testcaseInfo(Integer testcaseId){
@@ -162,13 +191,14 @@ public class TestcaseService {
         testcaseRes.setConfigIds(testcase.getConfigIds());
         testcaseRes.setTestcaseName(testcase.getTestcaseName());
         List<TestcaseDetail> testcaseDetailList = testcaseDetailMapper.selectByTestcaseId(testcaseId);
+        List<TestcaseRes.Variable> variableList = new ArrayList<>();
+        List<TestcaseRes.Parameter> parameterList = new ArrayList<>();
+        List<TestcaseRes.Setuphook> setuphookList = new ArrayList<>();
+        List<TestcaseRes.ReqHeader> reqHeaderList = new ArrayList<>();
+        List<TestcaseRes.ReqParam> reqParamList = new ArrayList<>();
+        List<TestcaseRes.Response> responseList = new ArrayList<>();
+        Map reqBodyMap = new HashMap();
         if(testcaseDetailList.size()>0){
-            List<TestcaseRes.Variable> variableList = new ArrayList<>();
-            List<TestcaseRes.Parameter> parameterList = new ArrayList<>();
-            List<TestcaseRes.Setuphook> setuphookList = new ArrayList<>();
-            List<TestcaseRes.ReqHeader> reqHeaderList = new ArrayList<>();
-            List<TestcaseRes.ReqParam> reqParamList = new ArrayList<>();
-            List<TestcaseRes.Response> responseList = new ArrayList<>();
             for(TestcaseDetail testcaseDetail:testcaseDetailList){
                 String scope=testcaseDetail.getScope();
                 switch (scope){
@@ -216,22 +246,38 @@ public class TestcaseService {
                         response.setType(testcaseDetail.getType());
                         response.setComparator(testcaseDetail.getComparator());
                         response.setExpectedValue(testcaseDetail.getExpectedValue());
+                        List<TestcaseDetail> testcaseDetails= testcaseDetailMapper.selectByParentId(testcaseDetail.getId());
+                        if(testcaseDetails.size()>=0){
+                            List<TestcaseRes.Response> responses= new ArrayList<>();
+                            for(TestcaseDetail td: testcaseDetails){
+                                TestcaseRes.Response res= new TestcaseRes.Response();
+//                                TestcaseRes.Response res= TestcaseRes.Response.builder().id(td.getId()).name(td.getName()).type(td.getType()).comparator(td.getComparator()).expectedValue(td.getExpectedValue()).build();
+                                res.setId(td.getId());
+                                res.setName(td.getName());
+                                res.setType(td.getType());
+                                res.setComparator(td.getComparator());
+                                res.setExpectedValue(td.getExpectedValue());
+                                responses.add(res);
+                            }
+                            response.setChildren(responses);
+                        }
+
                         responseList.add(response);
                         break;
                     case "requestBody":
-                        Map reqBodyMap = new HashMap();
                         reqBodyMap.put("id",testcaseDetail.getId());
                         reqBodyMap.put("requestBody",testcaseDetail.getValue());
-                        testcaseRes.setReqBody(reqBodyMap);
                 }
             }
-            testcaseRes.setVariables(variableList);
-            testcaseRes.setParameters(parameterList);
-            testcaseRes.setSetuphooks(setuphookList);
-            testcaseRes.setReqHeaders(reqHeaderList);
-            testcaseRes.setReqParams(reqParamList);
-            testcaseRes.setResponses(responseList);
+
         }
+        testcaseRes.setVariables(variableList);
+        testcaseRes.setParameters(parameterList);
+        testcaseRes.setSetuphooks(setuphookList);
+        testcaseRes.setReqHeaders(reqHeaderList);
+        testcaseRes.setReqParams(reqParamList);
+        testcaseRes.setResponses(responseList);
+        testcaseRes.setReqBody(reqBodyMap);
         return testcaseRes;
 
     }
@@ -411,7 +457,7 @@ public class TestcaseService {
     }
 
 
-    public void runTestcase(Integer envId,Integer projectId,Integer testcaseId,Integer flag){
+    public void runTestcase(Integer envId,Integer projectId,Integer testcaseId,Boolean flag){
         //初始化数据库
         String testcaseDb= testcaseDbMapper.selectByTestcaseId(testcaseId);
         List dbIds = JSON.parseArray(testcaseDb,String.class);
@@ -564,7 +610,7 @@ public class TestcaseService {
         reportMapper.insert(report);
         //return testcaseList;
         //删除镜像
-        if(flag!=null && flag==1){
+        if(flag){
             deleteDatabase();
         }
     }

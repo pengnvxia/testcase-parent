@@ -13,5 +13,5 @@ public class RunTestcaseReq {
 
     private List<Integer> testcaseIds;
 
-    private Integer flag;
+    private Boolean flag;
 }

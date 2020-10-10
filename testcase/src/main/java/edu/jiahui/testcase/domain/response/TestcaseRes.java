@@ -1,5 +1,6 @@
 package edu.jiahui.testcase.domain.response;
 import com.alibaba.fastjson.JSONObject;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -102,5 +103,7 @@ public class TestcaseRes {
         private String comparator;
 
         private String expectedValue;
+
+        private List<Response> children;
     }
 }

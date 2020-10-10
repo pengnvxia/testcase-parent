@@ -3,7 +3,6 @@ package edu.jiahui.testcase.domain.request;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
@@ -117,5 +116,7 @@ public class TestcaseReq {
 
         @NotBlank(message = "response expectedValue不能为空")
         private String expectedValue;
+
+        private List<Response> children;
     }
 }
