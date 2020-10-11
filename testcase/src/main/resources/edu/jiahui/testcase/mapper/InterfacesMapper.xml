@@ -41,6 +41,11 @@
     select id,name,url,updatedBy,updatedAt from interfaces where
     env_id=#{envId} and repositoryId=#{repositoryId} and moduleId=#{moduleId}
   </select>
+<!--  <insert id="insert" parameterMap="edu.jiahui.testcase.domain.Interfaces">-->
+<!--    insert into interfaces-->
+<!--    (name,url,method,description,end_id)-->
+<!--    values (#{name},#{url},#{method},#{description},#{endId})-->
+<!--  </insert>-->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from interfaces where id=#{id}
   </delete>

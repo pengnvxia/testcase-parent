@@ -240,29 +240,9 @@ public class TestcaseService {
                         reqParamList.add(reqParam);
                         break;
                     case "response":
-                        TestcaseRes.Response  response = new TestcaseRes.Response();
-                        response.setId(testcaseDetail.getId());
-                        response.setName(testcaseDetail.getName());
-                        response.setType(testcaseDetail.getType());
-                        response.setComparator(testcaseDetail.getComparator());
-                        response.setExpectedValue(testcaseDetail.getExpectedValue());
-                        List<TestcaseDetail> testcaseDetails= testcaseDetailMapper.selectByParentId(testcaseDetail.getId());
-                        if(testcaseDetails.size()>=0){
-                            List<TestcaseRes.Response> responses= new ArrayList<>();
-                            for(TestcaseDetail td: testcaseDetails){
-                                TestcaseRes.Response res= new TestcaseRes.Response();
-//                                TestcaseRes.Response res= TestcaseRes.Response.builder().id(td.getId()).name(td.getName()).type(td.getType()).comparator(td.getComparator()).expectedValue(td.getExpectedValue()).build();
-                                res.setId(td.getId());
-                                res.setName(td.getName());
-                                res.setType(td.getType());
-                                res.setComparator(td.getComparator());
-                                res.setExpectedValue(td.getExpectedValue());
-                                responses.add(res);
-                            }
-                            response.setChildren(responses);
+                        if(testcaseDetail.getParentId()==null || testcaseDetail.getParentId().equals("")){
+                            responseList.add(recursionSearchResponse(testcaseDetail));
                         }
-
-                        responseList.add(response);
                         break;
                     case "requestBody":
                         reqBodyMap.put("id",testcaseDetail.getId());
@@ -280,6 +260,28 @@ public class TestcaseService {
         testcaseRes.setReqBody(reqBodyMap);
         return testcaseRes;
 
+    }
+
+    public TestcaseRes.Response recursionSearchResponse(TestcaseDetail testcaseDetail){
+        TestcaseRes.Response  response = new TestcaseRes.Response();
+        response.setId(testcaseDetail.getId());
+        response.setName(testcaseDetail.getName());
+        response.setType(testcaseDetail.getType());
+        response.setComparator(testcaseDetail.getComparator());
+        response.setExpectedValue(testcaseDetail.getExpectedValue());
+        List<TestcaseDetail> testcaseDetails= testcaseDetailMapper.selectByParentId(testcaseDetail.getId());
+        if(testcaseDetails.size()>=0){
+            List<TestcaseRes.Response> responses= new ArrayList<>();
+            for(TestcaseDetail td: testcaseDetails){
+                TestcaseRes.Response res= new TestcaseRes.Response();
+                res=recursionSearchResponse(td);
+                responses.add(res);
+            }
+            if(responses.size()>0){
+                response.setChildren(responses);
+            }
+        }
+        return response;
     }
 
     public void updateTestcase(Integer id,TestcaseReq req){
@@ -308,9 +310,9 @@ public class TestcaseService {
                     ids.add(testcaseDetail.getId());
                 }
             }
-            testcaseDetailMapper.deleteNotIn(ids,id,"variables");
+            testcaseDetailMapper.deleteNotIn(ids,id,null,"variables");
         }else {
-            testcaseDetailMapper.deleteNotIn(null,id,"variables");
+            testcaseDetailMapper.deleteNotIn(null,id,null,"variables");
         }
 
         if(req.getParameters()!=null && req.getParameters().size()>0){
@@ -330,9 +332,9 @@ public class TestcaseService {
                     ids.add(testcaseDetail.getId());
                 }
             }
-            testcaseDetailMapper.deleteNotIn(ids,id,"parameters");
+            testcaseDetailMapper.deleteNotIn(ids,id,null,"parameters");
         }else {
-            testcaseDetailMapper.deleteNotIn(null,id,"parameters");
+            testcaseDetailMapper.deleteNotIn(null,id,null,"parameters");
         }
 
         if(req.getSetuphooks()!=null && req.getSetuphooks().size()>0){
@@ -352,9 +354,9 @@ public class TestcaseService {
                     ids.add(testcaseDetail.getId());
                 }
             }
-            testcaseDetailMapper.deleteNotIn(ids,id,"setupHooks");
+            testcaseDetailMapper.deleteNotIn(ids,id,null,"setupHooks");
         }else {
-            testcaseDetailMapper.deleteNotIn(null,id,"setupHooks");
+            testcaseDetailMapper.deleteNotIn(null,id,null,"setupHooks");
         }
 
         if(req.getReqHeaders()!=null && req.getReqHeaders().size()>0){
@@ -374,9 +376,9 @@ public class TestcaseService {
                     ids.add(testcaseDetail.getId());
                 }
             }
-            testcaseDetailMapper.deleteNotIn(ids,id,"reqHeaders");
+            testcaseDetailMapper.deleteNotIn(ids,id,null,"reqHeaders");
         }else {
-            testcaseDetailMapper.deleteNotIn(null,id,"reqHeaders");
+            testcaseDetailMapper.deleteNotIn(null,id,null,"reqHeaders");
         }
 
         if(req.getReqParams()!=null && req.getReqParams().size()>0){
@@ -396,33 +398,34 @@ public class TestcaseService {
                     ids.add(testcaseDetail.getId());
                 }
             }
-            testcaseDetailMapper.deleteNotIn(ids,id,"reqParams");
+            testcaseDetailMapper.deleteNotIn(ids,id,null,"reqParams");
         }else {
-            testcaseDetailMapper.deleteNotIn(null,id,"reqParams");
+            testcaseDetailMapper.deleteNotIn(null,id,null,"reqParams");
         }
 
         if(req.getResponses()!=null && req.getResponses().size()>0){
-            List<Integer> ids = new ArrayList<>();
-            for(TestcaseReq.Response response:req.getResponses()){
-                TestcaseDetail testcaseDetail= new TestcaseDetail();
-                testcaseDetail.setScope("response");
-                testcaseDetail.setName(response.getName());
-                testcaseDetail.setType(response.getType());
-                testcaseDetail.setExpectedValue(response.getExpectedValue());
-                testcaseDetail.setComparator(response.getComparator());
-                if(response.getId()!=null){
-                    testcaseDetail.setId(response.getId());
-                    testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
-                    ids.add(response.getId());
-                }else {
-                    testcaseDetail.setTestcaseId(id);
-                    testcaseDetailMapper.insertOne(testcaseDetail);
-                    ids.add(testcaseDetail.getId());
-                }
-            }
-            testcaseDetailMapper.deleteNotIn(ids,id,"response");
+            recursionEditResponse(req.getResponses(),id,null,false);
+//            List<Integer> ids = new ArrayList<>();
+//            for(TestcaseReq.Response response:req.getResponses()){
+//                TestcaseDetail testcaseDetail= new TestcaseDetail();
+//                testcaseDetail.setScope("response");
+//                testcaseDetail.setName(response.getName());
+//                testcaseDetail.setType(response.getType());
+//                testcaseDetail.setExpectedValue(response.getExpectedValue());
+//                testcaseDetail.setComparator(response.getComparator());
+//                if(response.getId()!=null){
+//                    testcaseDetail.setId(response.getId());
+//                    testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
+//                    ids.add(response.getId());
+//                }else {
+//                    testcaseDetail.setTestcaseId(id);
+//                    testcaseDetailMapper.insertOne(testcaseDetail);
+//                    ids.add(testcaseDetail.getId());
+//                }
+//            }
+//            testcaseDetailMapper.deleteNotIn(ids,id,"response");
         }else {
-            testcaseDetailMapper.deleteNotIn(null,id,"response");
+            testcaseDetailMapper.deleteNotIn(null,id,null,"response");
         }
 
         if(req.getReqBody()!=null){
@@ -437,6 +440,41 @@ public class TestcaseService {
                 testcaseDetailMapper.insertOne(testcaseDetail);
             }
         }
+    }
+
+    public void recursionEditResponse(List<TestcaseReq.Response> responseItemList,Integer testcaseId,Integer parentId,Boolean flag){
+        Integer i=0;
+        List<Integer> ids = new ArrayList<>();
+        for(TestcaseReq.Response responseItem: responseItemList){
+            TestcaseDetail testcaseDetail = new TestcaseDetail();
+            testcaseDetail.setName(responseItem.getName());
+            testcaseDetail.setType(responseItem.getType());
+            testcaseDetail.setComparator(responseItem.getComparator());
+            testcaseDetail.setExpectedValue(responseItem.getExpectedValue());
+            testcaseDetail.setScope("response");
+            testcaseDetail.setTestcaseId(testcaseId);
+            testcaseDetail.setParentId(parentId);
+            if(flag){
+                testcaseDetail.setArrayIndex(i);
+            }
+            if(responseItem.getId()!=null){
+                testcaseDetail.setId(responseItem.getId());
+                testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
+                ids.add(responseItem.getId());
+            }else {
+                testcaseDetail.setTestcaseId(testcaseId);
+                testcaseDetailMapper.insertOne(testcaseDetail);
+                ids.add(testcaseDetail.getId());
+            }
+            if(responseItem.getChildren()!=null){
+                if(responseItem.getType().equals("Array")){
+                    flag=true;
+                }
+                recursionEditResponse(responseItem.getChildren(),testcaseId,testcaseDetail.getId(),flag);
+            }
+            i=i+1;
+        }
+        testcaseDetailMapper.deleteNotIn(ids,testcaseId,parentId,"response");
     }
 
     public void deleteTestcase(Integer id){
