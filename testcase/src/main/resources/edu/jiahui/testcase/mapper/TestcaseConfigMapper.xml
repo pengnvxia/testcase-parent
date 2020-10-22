@@ -16,10 +16,59 @@
     id, config_name, project_id, env_id, description, created_by, updated_by, created_at,updated_at
     </sql>
 
-
     <select id="select" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from testcase_config order by id desc
     </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from testcase_config where id=#{id}
+    </select>
+
+    <select id="selectByCondition" resultMap="BaseResultMap" parameterType="edu.jiahui.testcase.domain.TestcaseConfig">
+        select
+        <include refid="Base_Column_List"/>
+        from testcase_config
+        <if test="configName != null or projectId != null or updatedBy != null or envId != null">
+        where
+        <if test="configName != null">
+            config_name like '%${configName}%'
+        </if>
+        <if test="projectId != null">
+            and project_id = #{projectId}
+        </if>
+        <if test="updatedBy != null">
+            and updated_by=#{lastUpdatedBy}
+        </if>
+        <if test="envId != null">
+            and env_id = #{envId}
+        </if>
+        </if>
+    </select>
+
+    <select id="selectByConfigName" resultType="java.lang.Integer">
+        select count(*)
+        from testcase_config
+        where config_name=#{configName}
+        <if test="id!=null">
+            and id!=#{id}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into testcase_config
+        (config_name,project_id,env_id,description) values (#{configName},#{projectId},#{envId},#{description})
+    </insert>
+
+    <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseConfig">
+        update testcase_config set config_name=#{configName},project_id=#{projectId},env_id=#{envId},description=#{description}
+        where id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from testcase_config where id=#{id}
+    </delete>
 </mapper>

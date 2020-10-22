@@ -1,11 +1,8 @@
 package edu.jiahui.testcase.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-//import com.google.gson.JsonObject;
-//import com.google.gson.annotations.JsonAdapter;
-//import com.spotify.docker.client.DockerCertificateException;
-//import com.spotify.docker.client.DockerException;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.httpclient.HttpClientTemplate;
 import edu.jiahui.testcase.constants.BaseConstans;
@@ -25,6 +22,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -162,7 +160,7 @@ public class TestcaseService {
             TestcaseDetail testcaseDetail = new TestcaseDetail();
             testcaseDetail.setName(responseItem.getName());
             testcaseDetail.setType(responseItem.getType());
-            testcaseDetail.setComparator(responseItem.getComparator());
+            testcaseDetail.setComparator(responseItem.getComparator().equals("")? null:responseItem.getComparator());
             testcaseDetail.setExpectedValue(responseItem.getExpectedValue());
             testcaseDetail.setScope("response");
             testcaseDetail.setTestcaseId(testcaseId);
@@ -267,7 +265,7 @@ public class TestcaseService {
         response.setId(testcaseDetail.getId());
         response.setName(testcaseDetail.getName());
         response.setType(testcaseDetail.getType());
-        response.setComparator(testcaseDetail.getComparator());
+        response.setComparator(testcaseDetail.getComparator()==null?"":testcaseDetail.getComparator());
         response.setExpectedValue(testcaseDetail.getExpectedValue());
         List<TestcaseDetail> testcaseDetails= testcaseDetailMapper.selectByParentId(testcaseDetail.getId());
         if(testcaseDetails.size()>=0){
@@ -449,7 +447,7 @@ public class TestcaseService {
             TestcaseDetail testcaseDetail = new TestcaseDetail();
             testcaseDetail.setName(responseItem.getName());
             testcaseDetail.setType(responseItem.getType());
-            testcaseDetail.setComparator(responseItem.getComparator());
+            testcaseDetail.setComparator(responseItem.getComparator().equals("")?null:responseItem.getComparator());
             testcaseDetail.setExpectedValue(responseItem.getExpectedValue());
             testcaseDetail.setScope("response");
             testcaseDetail.setTestcaseId(testcaseId);
@@ -497,9 +495,9 @@ public class TestcaseService {
 
     public void runTestcase(Integer envId,Integer projectId,Integer testcaseId,Boolean flag){
         //初始化数据库
-        String testcaseDb= testcaseDbMapper.selectByTestcaseId(testcaseId);
-        List dbIds = JSON.parseArray(testcaseDb,String.class);
-        initDatabase(dbIds);
+//        String testcaseDb= testcaseDbMapper.selectByTestcaseId(testcaseId);
+//        List dbIds = JSON.parseArray(testcaseDb,String.class);
+//        initDatabase(dbIds);
         //拼接用例数据
         Project project = projectMapper.selectByPrimaryKey(projectId);
         String baseUrl = envId==1 ? project.getDevAddress():project.getProdAddress();
@@ -520,6 +518,7 @@ public class TestcaseService {
         JSONObject reqHeadersJson= new JSONObject();
         JSONObject reqParamsJson= new JSONObject();
         JSONObject requestBodyJson= new JSONObject();
+        JSONArray requestBodyJsonArray= new JSONArray();
         JSONObject configParametersJson= new JSONObject();
         List validateList = new ArrayList();
         if(testcaseDetailList.size()<=0){
@@ -527,7 +526,20 @@ public class TestcaseService {
         }else {
             for(TestcaseDetail testcaseDetail: testcaseDetailList){
                 if(testcaseDetail.getScope().equals("setupHooks")){
-                    //执行sql
+                    //执行sql,只执行添加删除sql
+                    DatabaseWithBLOBs databaseInfo =databaseMapper.selectByPrimaryKey(testcaseDetail.getDatabaseId());
+                    String databaseAddress = databaseInfo.getHost()+":"+databaseInfo.getPort();
+                    Connection conn = JDBCUtil.getConnection(databaseAddress,databaseInfo.getDbName(),databaseInfo.getUsername(),databaseInfo.getPassword());
+                    try {
+                        PreparedStatement pst = conn.prepareStatement(testcaseDetail.getValue());
+                        pst.execute();
+                        JDBCUtil.close(pst, conn);
+                    }catch (SQLException e){
+                        throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(),e.getMessage()));
+                    }catch (Exception e){
+                        throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(),e.getMessage()));
+
+                    }
                 }
 
                 if(testcaseDetail.getScope().equals("parameters")){
@@ -538,8 +550,30 @@ public class TestcaseService {
                 }
 
                 if(testcaseDetail.getScope().equals("variables")){
-                    if(testcaseDetail.getType()=="sql"){
+                    if(testcaseDetail.getType().equals("Sql")){
+//                        List<String> keyList = Arrays.asList(testcaseDetail.getName());
+                        List keyList =JSON.parseArray(testcaseDetail.getName(),String.class);
 //                        执行后赋值
+                        DatabaseWithBLOBs databaseInfo =databaseMapper.selectByPrimaryKey(testcaseDetail.getDatabaseId());
+                        String databaseAddress = databaseInfo.getHost()+":"+databaseInfo.getPort();
+                        Connection conn = JDBCUtil.getConnection(databaseAddress,databaseInfo.getDbName(),databaseInfo.getUsername(),databaseInfo.getPassword());
+                        ResultSet rs = null;
+                        try {
+                            PreparedStatement pst = conn.prepareStatement(testcaseDetail.getValue());
+                            rs = pst.executeQuery();
+                            while (rs.next()){
+                                for(Object k: keyList){
+                                    variablesJson.put(k.toString(),rs.getString(k.toString()));
+                                }
+                            }
+
+                            JDBCUtil.close(pst, conn);
+                        }catch (SQLException e){
+                            throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(),e.getMessage()));
+                        }catch (Exception e){
+                            throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(),e.getMessage()));
+                        }
+
                     }else {
                         variablesJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
                     }
@@ -556,28 +590,30 @@ public class TestcaseService {
                 if(testcaseDetail.getScope().equals("response")){
                     JSONObject item = new JSONObject();
                     String type = null;
-                    switch (testcaseDetail.getComparator()){
-                        case "=":
-                            type="eq";
-                            break;
-                        case ">":
-                            type="gt";
-                            break;
-                        case "<":
-                            type="lt";
-                            break;
-                        case ">=":
-                            type="ge";
-                            break;
-                        case "<=":
-                            type="le";
-                            break;
-                        case "!=":
-                            type="ne";
-                            break;
-                        case "contain":
-                            type="contains";
-                            break;
+                    if(testcaseDetail.getComparator()!=null){
+                        switch (testcaseDetail.getComparator()){
+                            case "=":
+                                type="eq";
+                                break;
+                            case ">":
+                                type="gt";
+                                break;
+                            case "<":
+                                type="lt";
+                                break;
+                            case ">=":
+                                type="ge";
+                                break;
+                            case "<=":
+                                type="le";
+                                break;
+                            case "!=":
+                                type="ne";
+                                break;
+                            case "contain":
+                                type="contains";
+                                break;
+                        }
                     }
 
                     List actualExceptedList =new ArrayList();
@@ -597,8 +633,11 @@ public class TestcaseService {
                     }
                 }
                 if(testcaseDetail.getScope().equals("requestBody")){
-                    requestBodyJson = JSON.parseObject(testcaseDetail.getValue());
-
+                    if(testcaseDetail.getValue().startsWith("[")){
+                        requestBodyJsonArray = JSON.parseArray(testcaseDetail.getValue());
+                    }else {
+                        requestBodyJson = JSON.parseObject(testcaseDetail.getValue());
+                    }
                 }
             }
         }
@@ -614,7 +653,7 @@ public class TestcaseService {
 
         JSONObject requestJson = new JSONObject();
         requestJson.put("headers",reqHeadersJson);
-        requestJson.put("json",requestBodyJson);
+        requestJson.put("json",requestBodyJson.isEmpty()?requestBodyJsonArray:requestBodyJson);
         requestJson.put("method",testcase.getMethod());
         requestJson.put("url",testcase.getUrl());
         requestJson.put("params",reqParamsJson);
@@ -648,9 +687,9 @@ public class TestcaseService {
         reportMapper.insert(report);
         //return testcaseList;
         //删除镜像
-        if(flag){
-            deleteDatabase();
-        }
+//        if(flag){
+//            deleteDatabase();
+//        }
     }
 
     //逐级拼接response中的名称
@@ -799,20 +838,20 @@ public class TestcaseService {
         httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/images/mysql:5.7c");
     }
 
-    public void createDatabase(String dbName) throws SQLException {
-        Connection conn = JDBCUtil.getConnection("");
-        String createDbSql = "create database " + dbName;
-        PreparedStatement pst = conn.prepareStatement(createDbSql);
-        pst.executeUpdate();
-        JDBCUtil.close(pst, conn);
-    }
+//    public void createDatabase(String dbName) throws SQLException {
+//        Connection conn = JDBCUtil.getConnection("");
+//        String createDbSql = "create database " + dbName;
+//        PreparedStatement pst = conn.prepareStatement(createDbSql);
+//        pst.executeUpdate();
+//        JDBCUtil.close(pst, conn);
+//    }
 
-    public void createTable(String dbName,String createTableSql) throws SQLException {
-        Connection conn = JDBCUtil.getConnection(dbName);
-        PreparedStatement pst = conn.prepareStatement(createTableSql);
-        pst.executeUpdate();
-        JDBCUtil.close(pst, conn);
-    }
+//    public void createTable(String dbName,String createTableSql) throws SQLException {
+//        Connection conn = JDBCUtil.getConnection(dbName);
+//        PreparedStatement pst = conn.prepareStatement(createTableSql);
+//        pst.executeUpdate();
+//        JDBCUtil.close(pst, conn);
+//    }
 
 
 

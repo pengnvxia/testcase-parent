@@ -29,6 +29,6 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Report">
-    insert report (testcase_id,group_id,content,result) values (#{testcaseId},#{groupId},#{content},#{result})
+    insert into report (testcase_id,group_id,content,result) values (#{testcaseId},#{groupId},#{content},#{result})
   </insert>
 </mapper>

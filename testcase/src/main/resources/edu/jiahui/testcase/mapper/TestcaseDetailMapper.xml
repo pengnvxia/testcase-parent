@@ -33,7 +33,7 @@
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
-    insert testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value)
+    insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value)
     values
     <foreach collection="list" item="item" separator=",">
     (#{item.scope},#{item.type},#{item.name},#{item.propertiesId},#{item.value},#{item.databaseId},#{item.testcaseId},#{item.comparator},#{item.expectedValue})

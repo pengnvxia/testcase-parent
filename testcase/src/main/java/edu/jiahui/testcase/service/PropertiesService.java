@@ -63,19 +63,19 @@ public class PropertiesService {
         return testcaseRes;
     }
 
-//    public void addInterfaceInfo(AddInterfaceInfoReq req){
-//        Interfaces interfaces= new Interfaces();
-//        interfaces.setName(req.getInterfaceName());
-//        interfaces.setUrl(req.getInterfaceAddress());
-//        interfaces.setMethod(req.getInterfaceMethod());
-//        interfaces.setDescription(req.getDescription());
-//        interfaces.setRepositoryId(req.getProjectId());
-//        interfaces.setModuleId(req.getModuleId());
-//        interfaces.setEnvId(req.getEnvId());
-//        interfacesMapper.insert(interfaces);
-////        Interfaces interfaces=Interfaces.builder().name(req.getInterfaceName()).
-////                url(req.getInterfaceAddress()).method(req.getInterfaceMethod()).
-////                description(req.getDescription()).repositoryId(req.getProjectId()).moduleId(req.getModuleId()).build();
-//
-//    }
+    public void addInterfaceInfo(AddInterfaceInfoReq req){
+        Interfaces interfaces= new Interfaces();
+        interfaces.setName(req.getInterfaceName());
+        interfaces.setUrl(req.getInterfaceAddress());
+        interfaces.setMethod(req.getInterfaceMethod());
+        interfaces.setDescription(req.getDescription());
+        interfaces.setRepositoryId(req.getProjectId());
+        interfaces.setModuleId(req.getModuleId());
+        interfaces.setEnvId(req.getEnvId());
+        interfacesMapper.insert(interfaces);
+//        Interfaces interfaces=Interfaces.builder().name(req.getInterfaceName()).
+//                url(req.getInterfaceAddress()).method(req.getInterfaceMethod()).
+//                description(req.getDescription()).repositoryId(req.getProjectId()).moduleId(req.getModuleId()).build();
+
+    }
 }

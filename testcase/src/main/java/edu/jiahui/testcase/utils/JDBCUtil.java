@@ -9,13 +9,13 @@ import java.sql.Statement;
 public class JDBCUtil {
 
     //获取数据库连接对象
-    public static Connection getConnection(String databaseName){
+    public static Connection getConnection(String databaseAddress,String databaseName,String username, String password){
         Connection conn=null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String url="jdbc:mysql://localhost:3306/"+databaseName+"?characterEncoding=utf-8&useSSL=false";
-            String username="root";
-            String password="123456";
+            String url="jdbc:mysql://"+databaseAddress+"/"+databaseName+"?characterEncoding=utf-8&useSSL=false";
+//            String username="root";
+//            String password="123456";
             conn=DriverManager.getConnection(url,username,password);
         } catch (Exception e) {
             // TODO Auto-generated catch block

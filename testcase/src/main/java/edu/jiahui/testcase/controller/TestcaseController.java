@@ -123,15 +123,15 @@ public class TestcaseController {
         return ResultCode.getSuccessReturn(null,null,"操作成功！");
     }
 
-//    @RequestMapping(method = RequestMethod.POST,value = "/addInterface")
-//    public ResultCode addInterface(@RequestBody @Valid AddInterfaceInfoReq req){
-//        try {
-//            propertiesService.addInterfaceInfo(req);
-//        }catch (Exception e){
-//            return ResultCode.getFailure(null,e.getMessage());
-//        }
-//        return ResultCode.getSuccessReturn(null,null,"添加成功！");
-//    }
+    @RequestMapping(method = RequestMethod.POST,value = "/addInterface")
+    public ResultCode addInterface(@RequestBody @Valid AddInterfaceInfoReq req){
+        try {
+            propertiesService.addInterfaceInfo(req);
+        }catch (Exception e){
+            return ResultCode.getFailure(null,e.getMessage());
+        }
+        return ResultCode.getSuccessReturn(null,null,"添加成功！");
+    }
 
 //    @RequestMapping(method = RequestMethod.POST, value = "/create/testcase")
 //    public ResultCode<List<String>> createTestcase(@RequestBody @Valid CreateTestcaseReq req){

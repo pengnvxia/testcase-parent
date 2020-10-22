@@ -16,6 +16,9 @@ public class BaseConstans {
         NOT_RUN_CASE("CASE002","没有要运行的用例"),
         CASEDETAIL_NOT_EXIT("CASEDETAIL001","用例详细信息不存在"),
         DBNAME_NOT_EXIT("DB001","数据库名称不存在"),
+        SQL_ERROR("DB002","sql写错"),
+        RUN_SQL_ERROR("DB003","执行sql是错误"),
+        CONFIG_NAME_EXIT("CONFIG001","配置项名称已经存在"),
         ;
 
 

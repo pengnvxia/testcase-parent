@@ -5,7 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="value" property="value" jdbcType="INTEGER" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
     <result column="config_id" property="configId" jdbcType="INTEGER" />
     <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
     <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
@@ -22,10 +22,46 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
-  <select id="selectByConfigId" parameterType="java.lang.Integer">
+  <select id="selectByConfigId" parameterType="java.lang.Integer" resultType="edu.jiahui.testcase.domain.TestcaseConfigDetail">
     select
     <include refid="Base_Column_List"/>
     from testcase_config_detail
     where config_id=#{configId}
   </select>
+
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseConfigDetail">
+    insert into testcase_config_detail
+    (name,type,value,config_id)
+    values
+    <foreach collection="testcaseConfigDetails" item="item" separator=",">
+      (#{item.name},#{item.type},#{item.value},#{item.configId})
+    </foreach>
+  </insert>
+
+  <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseConfigDetail">
+    insert into testcase_config_detail
+    (name,type,value,config_id)
+    values (#{name},#{type},#{value},#{configId})
+  </insert>
+
+  <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseConfigDetail">
+    update testcase_config_detail
+    set name=#{name},type=#{type},value=#{value}
+    where id=#{id}
+  </update>
+
+  <delete id="deleteNotIn" parameterType="java.lang.Integer">
+    delete from testcase_config_detail
+    where config_id=#{configId}
+    <if test="ids!=null">
+      and id not in
+      <foreach collection="ids" item="id" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+  </delete>
+
+  <delete id="deleteByConfigId" parameterType="java.lang.Integer">
+    delete from testcase_config_detail where config_id=#{configId}
+  </delete>
 </mapper>
