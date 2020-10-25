@@ -3,6 +3,7 @@ package edu.jiahui.testcase.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonArray;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.httpclient.HttpClientTemplate;
 import edu.jiahui.testcase.constants.BaseConstans;
@@ -69,6 +70,7 @@ public class TestcaseService {
         testcase.setEnvId(req.getEnvId());
         testcase.setConfigIds(req.getConfigIds());
         testcase.setInterfaceId(id);
+        testcase.setUrl(req.getPath());
         testcaseMapper.insert(testcase);
         Integer testcaseId = testcase.getId();
         List<TestcaseDetail> testcaseDetailList = new ArrayList<>();
@@ -186,7 +188,8 @@ public class TestcaseService {
 
         Testcase testcase=testcaseMapper.selectByPrimaryKey(testcaseId);
         testcaseRes.setEnvId(testcase.getEnvId());
-        testcaseRes.setConfigIds(testcase.getConfigIds());
+        testcaseRes.setPath(testcase.getUrl());
+        testcaseRes.setConfigIds(JSON.parseArray(testcase.getConfigIds(),Integer.class));
         testcaseRes.setTestcaseName(testcase.getTestcaseName());
         List<TestcaseDetail> testcaseDetailList = testcaseDetailMapper.selectByTestcaseId(testcaseId);
         List<TestcaseRes.Variable> variableList = new ArrayList<>();
@@ -286,6 +289,7 @@ public class TestcaseService {
         Testcase testcase= new Testcase();
         testcase.setTestcaseName(req.getTestcaseName());
         testcase.setEnvId(req.getEnvId());
+        testcase.setUrl(req.getPath());
         testcase.setConfigIds(req.getConfigIds());
         testcase.setId(id);
         testcaseMapper.updateByPrimaryKey(testcase);

@@ -25,7 +25,8 @@ public class PropertiesService {
     private PropertiesMapper propertiesMapper;
 
     public TestcaseRes InterfaceInfo(Integer interfaceId){
-        Integer envId = interfacesMapper.selectByPrimaryKey(interfaceId).getEnvId();
+        Interfaces interfaces= interfacesMapper.selectByPrimaryKey(interfaceId);
+//        Integer envId = interfacesMapper.selectByPrimaryKey(interfaceId).getEnvId();
         List<Properties> propertiesList = propertiesMapper.selectByInterfaceId(interfaceId);
         TestcaseRes testcaseRes = new TestcaseRes();
         List<TestcaseRes.Response> responseList = new ArrayList<>();
@@ -56,7 +57,8 @@ public class PropertiesService {
             }
         }
         testcaseRes.setRequestBody(requestBodyJson.toString());
-        testcaseRes.setEnvId(envId);
+        testcaseRes.setEnvId(interfaces.getEnvId());
+        testcaseRes.setPath(interfaces.getUrl());
         testcaseRes.setReqHeaders(reqHeaderList);
         testcaseRes.setReqParams(reqParamList);
         testcaseRes.setResponses(responseList);

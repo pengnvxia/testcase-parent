@@ -10,6 +10,8 @@ public class Testcase {
 
     private String testcaseName;
 
+    private String url;
+
     private Integer envId;
 
     private String configIds;
@@ -28,5 +30,4 @@ public class Testcase {
 
     private String method;
 
-    private String url;
 }

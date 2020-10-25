@@ -42,6 +42,7 @@ public class TestcaseController {
         return  ResultCode.getSuccessReturn(null, "添加成功！", null);
     }
 
+    //用接口id查询用例信息
     @RequestMapping(method = RequestMethod.GET, value= "/{id}" )
     public ResultCode interfaceInfo(@PathVariable("id")Integer id){
         TestcaseRes testcaseRes= new TestcaseRes();

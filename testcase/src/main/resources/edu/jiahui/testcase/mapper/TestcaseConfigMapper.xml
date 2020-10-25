@@ -32,19 +32,19 @@
         select
         <include refid="Base_Column_List"/>
         from testcase_config
-        <if test="configName != null or projectId != null or updatedBy != null or envId != null">
+        <if test="(configName != null and configName !='') or projectId != null or (updatedBy != null and updatedBy !='') or envId != null">
         where
-        <if test="configName != null">
-            config_name like '%${configName}%'
+        <if test="configName != null and configName !=''">
+            config_name like '%${configName}%' and
         </if>
         <if test="projectId != null">
-            and project_id = #{projectId}
+            project_id = #{projectId} and
         </if>
-        <if test="updatedBy != null">
-            and updated_by=#{lastUpdatedBy}
+        <if test="updatedBy != null and updatedBy !=''">
+            updated_by=#{updatedBy} and
         </if>
         <if test="envId != null">
-            and env_id = #{envId}
+            env_id = #{envId}
         </if>
         </if>
     </select>

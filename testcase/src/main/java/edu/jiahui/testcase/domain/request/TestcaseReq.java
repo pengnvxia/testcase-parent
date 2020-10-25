@@ -13,6 +13,9 @@ public class TestcaseReq {
     @NotBlank(message = "testcaseName不能为空")
     private String testcaseName;
 
+    @NotBlank(message = "path不能为空")
+    private String path;
+
     @NotNull(message = "envId不能为空")
     private Integer envId;
 

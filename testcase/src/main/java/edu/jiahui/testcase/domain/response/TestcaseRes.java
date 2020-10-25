@@ -16,9 +16,13 @@ public class TestcaseRes {
 
     private String testcaseName;
 
+    private String path;
+
     private Integer envId;
 
-    private String configIds;
+    private List<Integer> configIds;
+
+//    private String configIds;
 
     private String requestBody;
 
