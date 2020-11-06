@@ -3,6 +3,7 @@ package edu.jiahui.testcase.controller;
 
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.util.ResultCode;
+import edu.jiahui.testcase.domain.request.ConfigListReq;
 import edu.jiahui.testcase.domain.request.ConfigReq;
 import edu.jiahui.testcase.domain.request.SearchConfigReq;
 import edu.jiahui.testcase.domain.response.ConfigRes;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,8 +33,8 @@ public class ConfigController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/search/list")
-    public ResultCode<List<SearchConfigRes>> searchConfig(@RequestBody @Valid SearchConfigReq req){
-        List<SearchConfigRes> res = null;
+    public ResultCode<SearchConfigRes> searchConfig(@RequestBody @Valid SearchConfigReq req){
+        SearchConfigRes res = null;
         try{
             res = configService.searchConfig(req);
         }catch (Exception e){
@@ -40,6 +42,19 @@ public class ConfigController {
             return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
         }
         return ResultCode.getSuccessReturn(null, null, res);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/config/list")
+    public ResultCode<List<SearchConfigRes.Configs>> configList(@RequestBody @Valid ConfigListReq req){
+        List<SearchConfigRes.Configs> res= new ArrayList<>();
+        try{
+            res=configService.configsList(req);
+        }catch (Exception e){
+            log.error("查询配置项失败{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
+        }
+        return ResultCode.getSuccessReturn(null,null,res);
+
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/create")

@@ -1,13 +1,18 @@
 package edu.jiahui.testcase.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Report {
+
     private Integer id;
 
     private Integer testcaseId;
@@ -25,4 +30,6 @@ public class Report {
     private String content;
 
     private Integer result;
+
+    private String reportLink;
 }

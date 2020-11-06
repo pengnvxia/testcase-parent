@@ -28,25 +28,34 @@
         from testcase_config where id=#{id}
     </select>
 
-    <select id="selectByCondition" resultMap="BaseResultMap" parameterType="edu.jiahui.testcase.domain.TestcaseConfig">
+    <select id="selectByCondition" resultMap="BaseResultMap" parameterType="edu.jiahui.testcase.domain.request.SearchConfigReq">
         select
-        <include refid="Base_Column_List"/>
+        testcase_config.id, testcase_config.config_name, testcase_config.project_id, testcase_config.env_id, testcase_config.description, testcase_config.created_by, testcase_config.updated_by, testcase_config.created_at,testcase_config.updated_at
         from testcase_config
-        <if test="(configName != null and configName !='') or projectId != null or (updatedBy != null and updatedBy !='') or envId != null">
-        where
+        inner join
+        project
+        on
+        testcase_config.project_id=project.id
+        <where>
+        1=1
         <if test="configName != null and configName !=''">
-            config_name like '%${configName}%' and
+           and testcase_config.config_name like '%${configName}%'
         </if>
-        <if test="projectId != null">
-            project_id = #{projectId} and
+        <if test="projectName != null and projectName !=''">
+         and project.project_name like '%${projectName}%'
         </if>
-        <if test="updatedBy != null and updatedBy !=''">
-            updated_by=#{updatedBy} and
+        <if test="lastUpdatedBy != null and lastUpdatedBy !=''">
+          and testcase_config.updated_by=#{lastUpdatedBy}
         </if>
         <if test="envId != null">
-            env_id = #{envId}
+           and testcase_config.env_id = #{envId}
         </if>
-        </if>
+        </where>
+        order by testcase_config.updated_at desc
+    </select>
+
+    <select id="selectByIds" resultMap="BaseResultMap">
+        select id,config_name from testcase_config where project_id=#{projectId} and env_id=#{envId}
     </select>
 
     <select id="selectByConfigName" resultType="java.lang.Integer">

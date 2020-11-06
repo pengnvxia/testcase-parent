@@ -1,15 +1,16 @@
 package edu.jiahui.testcase.domain.response;
-import com.alibaba.fastjson.JSONObject;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TestcaseRes {
 
     private Integer id;
@@ -19,6 +20,8 @@ public class TestcaseRes {
     private String path;
 
     private Integer envId;
+
+    private String method;
 
     private List<Integer> configIds;
 
@@ -96,6 +99,9 @@ public class TestcaseRes {
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class Response {
 
         private Integer id;

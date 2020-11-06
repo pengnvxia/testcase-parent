@@ -35,12 +35,12 @@
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Testcase" useGeneratedKeys="true" keyProperty="id">
-    insert into testcase (testcase_name,env_id,config_ids,interface_id) values
-    (#{testcaseName},#{envId},#{configIds},#{interfaceId})
+    insert into testcase (testcase_name,env_id,config_ids,interface_id,url,method) values
+    (#{testcaseName},#{envId},#{configIds},#{interfaceId},#{url},#{method})
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.Testcase" >
-    update testcase set testcase_name=#{testcaseName},env_id=#{envId},config_ids=#{configIds}
+    update testcase set testcase_name=#{testcaseName},env_id=#{envId},config_ids=#{configIds},method=#{method}
     where id=#{id}
   </update>
 

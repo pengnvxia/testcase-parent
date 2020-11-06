@@ -1,9 +1,12 @@
 package edu.jiahui.testcase.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.domain.TestcaseConfig;
 import edu.jiahui.testcase.domain.TestcaseConfigDetail;
+import edu.jiahui.testcase.domain.request.ConfigListReq;
 import edu.jiahui.testcase.domain.request.ConfigReq;
 import edu.jiahui.testcase.domain.request.SearchConfigReq;
 import edu.jiahui.testcase.domain.response.ConfigRes;
@@ -45,16 +48,18 @@ public class ConfigService {
         return rsp;
     }
 
-    public List<SearchConfigRes> searchConfig(SearchConfigReq req){
-
-        TestcaseConfig testcaseConfig= TestcaseConfig.builder()
-                .configName(req.getConfigName()).projectId(req.getProjectId())
-                .updatedBy(req.getLastUpdatedBy()).envId(req.getEnvId()).build();
-        List<TestcaseConfig> testcaseConfigList = testcaseConfigMapper.selectByCondition(testcaseConfig);
-        List<SearchConfigRes> searchConfigResList = new ArrayList<>();
+    public SearchConfigRes searchConfig(SearchConfigReq req){
+        SearchConfigRes res = new SearchConfigRes();
+        PageHelper.startPage(req.currentifPage(),req.sizeif());
+//        TestcaseConfig testcaseConfig= TestcaseConfig.builder()
+//                .configName(req.getConfigName()).projectId(req.getProjectId())
+//                .updatedBy(req.getLastUpdatedBy()).envId(req.getEnvId()).build();
+        List<TestcaseConfig> testcaseConfigList = testcaseConfigMapper.selectByCondition(req);
+        PageInfo<TestcaseConfig> pageInfo= new PageInfo<TestcaseConfig>(testcaseConfigList);
+        List<SearchConfigRes.Configs> searchConfigResList = new ArrayList<>();
         for(TestcaseConfig tc: testcaseConfigList){
 
-            SearchConfigRes res= SearchConfigRes.builder().id(tc.getId())
+            SearchConfigRes.Configs configs= SearchConfigRes.Configs.builder().id(tc.getId())
                     .configName(tc.getConfigName())
                     .projectId(tc.getProjectId())
                     .projectName(projectMapper.selectByPrimaryKey(tc.getProjectId()).getProjectName())
@@ -63,10 +68,23 @@ public class ConfigService {
                     .description(tc.getDescription())
                     .envId(tc.getEnvId())
                     .build();
-            searchConfigResList.add(res);
+            searchConfigResList.add(configs);
         }
-        return searchConfigResList;
+        res.setConfigsList(searchConfigResList);
+        res.setTotal(pageInfo.getTotal());
+        return res;
     }
+
+    public List<SearchConfigRes.Configs> configsList(ConfigListReq req){
+        List<TestcaseConfig> testcaseConfigs= testcaseConfigMapper.selectByIds(req);
+        List<SearchConfigRes.Configs> configsList = new ArrayList<>();
+        for(TestcaseConfig tc: testcaseConfigs){
+            SearchConfigRes.Configs sc= SearchConfigRes.Configs.builder().id(tc.getId()).configName(tc.getConfigName()).build();
+            configsList.add(sc);
+        }
+        return configsList;
+    }
+
 
     public void createConfig(ConfigReq req){
         //判断名称是否存在
@@ -154,6 +172,8 @@ public class ConfigService {
     }
 
     public void deleteConfig(Integer id){
+        //配置项被引用不允许删除
+        //...
         testcaseConfigDetailMapper.deleteByConfigId(id);
         testcaseConfigMapper.delete(id);
     }

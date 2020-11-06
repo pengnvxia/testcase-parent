@@ -59,6 +59,7 @@ public class PropertiesService {
         testcaseRes.setRequestBody(requestBodyJson.toString());
         testcaseRes.setEnvId(interfaces.getEnvId());
         testcaseRes.setPath(interfaces.getUrl());
+        testcaseRes.setMethod(interfaces.getMethod());
         testcaseRes.setReqHeaders(reqHeaderList);
         testcaseRes.setReqParams(reqParamList);
         testcaseRes.setResponses(responseList);

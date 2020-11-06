@@ -19,7 +19,9 @@ public class TestcaseReq {
     @NotNull(message = "envId不能为空")
     private Integer envId;
 
-    private String configIds;
+    private String method;
+
+    private List<Integer> configIds;
 
     private String requestBody;
 

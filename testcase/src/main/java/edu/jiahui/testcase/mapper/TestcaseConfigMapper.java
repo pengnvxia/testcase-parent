@@ -1,6 +1,9 @@
 package edu.jiahui.testcase.mapper;
 
 import edu.jiahui.testcase.domain.TestcaseConfig;
+import edu.jiahui.testcase.domain.request.ConfigListReq;
+import edu.jiahui.testcase.domain.request.SearchConfigReq;
+import edu.jiahui.testcase.domain.response.SearchConfigRes;
 
 
 import java.util.List;
@@ -11,7 +14,9 @@ public interface TestcaseConfigMapper {
 
     TestcaseConfig selectByPrimaryKey(Integer id);
 
-    List<TestcaseConfig> selectByCondition(TestcaseConfig testcaseConfig);
+    List<TestcaseConfig> selectByCondition(SearchConfigReq req);
+
+    List<TestcaseConfig> selectByIds(ConfigListReq req);
 
     Integer insert(TestcaseConfig testcaseConfig);
 

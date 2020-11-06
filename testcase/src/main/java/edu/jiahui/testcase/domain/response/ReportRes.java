@@ -12,37 +12,27 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SearchConfigRes {
+public class ReportRes {
 
-    private List<Configs> configsList;
-
-    private Long total;
+    private List<Report> reportList;
 
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Configs{
+    public static class Report{
 
         private Integer id;
 
-        private String configName;
+        private Date createdAt;
 
-        private Integer projectId;
+        private String createdBy;
 
-        private String projectName;
+        private Integer result;
 
-        private String updateBy;
+        private String reportLink;
 
-        private Date updatedAt;
-
-        private String description;
-
-        private Integer envId;
-
+        private String reportHtml;
     }
-
-
-
 }
