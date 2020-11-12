@@ -66,6 +66,7 @@ public class TestcaseController {
         return ResultCode.getSuccessReturn(null,"删除成功！",null);
     }
 
+    //用用例id查询用例信息
     @RequestMapping(method = RequestMethod.GET, value= "/case/{id}")
     public ResultCode testcaseInfo(@PathVariable("id")Integer id){
         TestcaseRes testcaseRes = new TestcaseRes();

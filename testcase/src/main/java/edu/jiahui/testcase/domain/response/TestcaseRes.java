@@ -106,6 +106,8 @@ public class TestcaseRes {
 
         private Integer id;
 
+        private Integer indexValue;
+
         private String name;
 
         private String type;

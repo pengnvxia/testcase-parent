@@ -143,7 +143,7 @@ public class TestcaseService {
         testcaseDetailMapper.insert(testcaseDetailList);
 
         if(req.getResponses()!=null && req.getResponses().size()>0){
-            recursionResponse(req.getResponses(),testcaseId,null,false);
+            recursionResponse(req.getResponses(),testcaseId,null);
 //            for(TestcaseReq.Response response:req.getResponses()){
 //                TestcaseDetail testcaseDetail = new TestcaseDetail();
 //                testcaseDetail.setName(response.getName());
@@ -157,25 +157,21 @@ public class TestcaseService {
         }
     }
 
-    public void recursionResponse(List<TestcaseReq.Response> responseItemList,Integer testcaseId,Integer parentId,Boolean flag){
+    public void recursionResponse(List<TestcaseReq.Response> responseItemList,Integer testcaseId,Integer parentId){
         Integer i=0;
         for(TestcaseReq.Response responseItem: responseItemList){
-            TestcaseDetail testcaseDetail=TestcaseDetail.builder().name(responseItem.getName())
+            TestcaseDetail testcaseDetail=TestcaseDetail.builder()
+                    .arrayIndex(responseItem.getIndexValue())
+                    .name(responseItem.getName())
                     .type(responseItem.getType())
                     .comparator(responseItem.getComparator())
                     .expectedValue(responseItem.getExpectedValue())
                     .scope("response")
                     .testcaseId(testcaseId).parentId(parentId).build();
-            if(flag){
-                testcaseDetail.setArrayIndex(i);
-            }
             testcaseDetailMapper.insertOne(testcaseDetail);
 //            testcaseDetailList.add(testcaseDetail);
             if(responseItem.getChildren()!=null){
-                if(responseItem.getType().equals("Array")){
-                    flag=true;
-                }
-                recursionResponse(responseItem.getChildren(),testcaseId,testcaseDetail.getId(),flag);
+                recursionResponse(responseItem.getChildren(),testcaseId,testcaseDetail.getId());
             }
             i=i+1;
         }
@@ -278,6 +274,7 @@ public class TestcaseService {
 //        response.setExpectedValue(testcaseDetail.getExpectedValue());
         TestcaseRes.Response response= TestcaseRes.Response.builder()
                 .id(testcaseDetail.getId())
+                .indexValue(testcaseDetail.getArrayIndex())
                 .name(testcaseDetail.getName())
                 .type(testcaseDetail.getType())
                 .comparator(testcaseDetail.getComparator())
@@ -420,7 +417,7 @@ public class TestcaseService {
         }
 
         if(req.getResponses()!=null && req.getResponses().size()>0){
-            recursionEditResponse(req.getResponses(),id,null,false);
+            recursionEditResponse(req.getResponses(),id,null);
 //            List<Integer> ids = new ArrayList<>();
 //            for(TestcaseReq.Response response:req.getResponses()){
 //                TestcaseDetail testcaseDetail= new TestcaseDetail();
@@ -458,11 +455,12 @@ public class TestcaseService {
         }
     }
 
-    public void recursionEditResponse(List<TestcaseReq.Response> responseItemList,Integer testcaseId,Integer parentId,Boolean flag){
+    public void recursionEditResponse(List<TestcaseReq.Response> responseItemList,Integer testcaseId,Integer parentId){
         Integer i=0;
         List<Integer> ids = new ArrayList<>();
         for(TestcaseReq.Response responseItem: responseItemList){
             TestcaseDetail testcaseDetail=TestcaseDetail.builder()
+                    .arrayIndex(responseItem.getIndexValue())
                     .name(responseItem.getName())
                     .type(responseItem.getType())
                     .comparator(responseItem.getComparator())
@@ -470,9 +468,9 @@ public class TestcaseService {
                     .scope("response")
                     .testcaseId(testcaseId)
                     .parentId(parentId).build();
-            if(flag){
-                testcaseDetail.setArrayIndex(i);
-            }
+//            if(flag){
+//                testcaseDetail.setArrayIndex(i);
+//            }
             if(responseItem.getId()!=null){
                 testcaseDetail.setId(responseItem.getId());
                 testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -483,10 +481,10 @@ public class TestcaseService {
                 ids.add(testcaseDetail.getId());
             }
             if(responseItem.getChildren()!=null){
-                if(responseItem.getType().equals("Array")){
-                    flag=true;
-                }
-                recursionEditResponse(responseItem.getChildren(),testcaseId,testcaseDetail.getId(),flag);
+//                if(responseItem.getType().equals("Array")){
+//                    flag=true;
+//                }
+                recursionEditResponse(responseItem.getChildren(),testcaseId,testcaseDetail.getId());
             }
             i=i+1;
         }

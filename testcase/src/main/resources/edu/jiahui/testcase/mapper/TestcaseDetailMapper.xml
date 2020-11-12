@@ -63,7 +63,7 @@
 
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
     update testcase_detail set scope=#{scope},type=#{type},name=#{name},value=#{value},database_id=#{databaseId},comparator=#{comparator},
-    expected_value=#{expectedValue} where id=#{id}
+    expected_value=#{expectedValue},array_index=#{arrayIndex} where id=#{id}
   </update>
 
   <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseDetail" useGeneratedKeys="true" keyProperty="id">

@@ -110,6 +110,8 @@ public class TestcaseReq {
 
         private Integer id;
 
+        private Integer indexValue;
+
         @NotBlank(message = "response name不能为空")
         private String name;
 
