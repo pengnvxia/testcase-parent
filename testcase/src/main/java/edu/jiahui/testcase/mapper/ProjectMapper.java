@@ -10,4 +10,5 @@ public interface ProjectMapper {
     void delete(Integer id);
     void insert(Project project);
     Integer projectNameExit(Integer id, String projectName);
+    List<Project> selectByEnvId();
 }

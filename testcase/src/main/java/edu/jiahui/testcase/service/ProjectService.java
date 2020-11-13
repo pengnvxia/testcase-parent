@@ -12,6 +12,7 @@ import edu.jiahui.testcase.domain.request.SearchInterfaceReq;
 import edu.jiahui.testcase.domain.request.SearchModuleReq;
 import edu.jiahui.testcase.domain.response.InterfaceRes;
 import edu.jiahui.testcase.domain.response.ModuleRes;
+import edu.jiahui.testcase.domain.response.ProjectListRes;
 import edu.jiahui.testcase.mapper.*;
 import edu.jiahui.testcase.model.bo.ProjectBo;
 import edu.jiahui.testcase.domain.response.ProjectRes;
@@ -193,6 +194,19 @@ public class ProjectService {
 
     public boolean projectExit(Integer id, String projectName){
         return projectMapper.projectNameExit(id,projectName)>0;
+    }
+
+    public List<ProjectListRes.Project> projectList(){
+        List<Project> projectList=projectMapper.selectByEnvId();
+        List<ProjectListRes.Project> projects=new ArrayList<>();
+        for(Project pj: projectList){
+            ProjectListRes.Project project=ProjectListRes.Project.builder()
+                    .id(pj.getId())
+                    .projectName(pj.getProjectName())
+                    .build();
+                    projects.add(project);
+        }
+        return projects;
     }
 
 }

@@ -13,7 +13,7 @@ public interface TestcaseConfigDetailMapper {
 
     void insert(@Param("testcaseConfigDetails") List<TestcaseConfigDetail> testcaseConfigDetails);
 
-    void insertOne(TestcaseConfigDetail testcaseConfigDetail);
+    Integer insertOne(TestcaseConfigDetail testcaseConfigDetail);
 
     void update(TestcaseConfigDetail testcaseConfigDetail);
 

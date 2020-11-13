@@ -8,6 +8,7 @@ import edu.jiahui.testcase.domain.request.SearchModuleReq;
 import edu.jiahui.testcase.domain.request.ProjectReq;
 import edu.jiahui.testcase.domain.response.InterfaceRes;
 import edu.jiahui.testcase.domain.response.ModuleRes;
+import edu.jiahui.testcase.domain.response.ProjectListRes;
 import edu.jiahui.testcase.domain.response.ProjectRes;
 import edu.jiahui.testcase.model.bo.ProjectBo;
 import edu.jiahui.testcase.service.ProjectService;
@@ -134,6 +135,18 @@ public class ProjectController {
         }
         return ResultCode.getSuccessReturn(null,null,interfaceRes);
 
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/little/list")
+    public ResultCode projectList(){
+        List<ProjectListRes.Project> projects= new ArrayList<>();
+        try{
+            projects=projectService.projectList();
+        }catch (Exception e){
+            log.error("查询项目列表接口失败{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
+        }
+        return ResultCode.getSuccessReturn(null,null,projects);
     }
 
 }

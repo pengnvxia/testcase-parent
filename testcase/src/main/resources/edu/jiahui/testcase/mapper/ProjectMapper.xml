@@ -38,6 +38,11 @@
       and id &lt;&gt; #{id}
     </if>
   </select>
+
+  <select id="selectByEnvId" resultMap="BaseResultMap">
+    select id,project_name from project
+  </select>
+
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Project">
     insert into project
     (project_name,dev_address,prod_address,description) values (#{projectName},#{devAddress},#{prodAddress},#{description})

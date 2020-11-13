@@ -38,7 +38,7 @@
     </foreach>
   </insert>
 
-  <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseConfigDetail">
+  <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseConfigDetail" useGeneratedKeys="true" keyProperty="id">
     insert into testcase_config_detail
     (name,type,value,config_id)
     values (#{name},#{type},#{value},#{configId})
