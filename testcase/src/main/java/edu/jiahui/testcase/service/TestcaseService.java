@@ -10,6 +10,7 @@ import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.constants.DockerConstants;
 import edu.jiahui.testcase.constants.PythonConstants;
 import edu.jiahui.testcase.domain.*;
+import edu.jiahui.testcase.domain.request.CaseListReq;
 import edu.jiahui.testcase.domain.request.RunTestcaseReq;
 import edu.jiahui.testcase.domain.request.TestcaseReq;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
@@ -513,7 +514,7 @@ public class TestcaseService {
         //初始化数据库
 //        String testcaseDb= testcaseDbMapper.selectByTestcaseId(testcaseId);
 //        List dbIds = JSON.parseArray(testcaseDb,String.class);
-//        initDatabase(dbIds);
+//        initDatabase(dbIds); 先注掉，数据库方案还未确定
         //拼接用例数据
         Project project = projectMapper.selectByPrimaryKey(projectId);
         String baseUrl = envId==1 ? project.getDevAddress():project.getProdAddress();
@@ -717,7 +718,7 @@ public class TestcaseService {
         //报告数据落表
         reportMapper.insert(report);
         //return testcaseList;
-        //删除镜像
+        //删除镜像 先注掉，数据库方案还未确定
 //        if(flag){
 //            deleteDatabase();
 //        }
@@ -793,7 +794,8 @@ public class TestcaseService {
         return reportContent;
     }
 
-    public String createMysql(String imageName){
+    //调用接口方式创建容器，最终使用脚本方式创建容器
+//    public String createMysql(String imageName){
 
 //          String res= httpClientTemplate.doPost("http://127.0.0.1:2375/containers/create?name=mysql:5.7",(Object)null);
 //        String res= httpClientTemplate.doGet("http://127.0.0.1:2375/containers/json");
@@ -802,8 +804,8 @@ public class TestcaseService {
 //        return containerId;
 //        return res;
 //        String aaa = dockerUtil.inspect(imageName).toString();
-        return "aaa";
-    }
+//        return "aaa";
+//    }
 
     public void initDatabase(List<Integer> ids){
 //        DatabaseWithBLOBs database= databaseMapper.selectByPrimaryKey(id);
@@ -868,6 +870,27 @@ public class TestcaseService {
         httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/containers/mysqlc");
         httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/images/mysql:5.7c");
     }
+
+    public List<Testcase> caseList(CaseListReq req){
+        List<Testcase> testcaseList = testcaseMapper.selectByIds(req);
+
+        return testcaseList;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    public void createDatabase(String dbName) throws SQLException {
 //        Connection conn = JDBCUtil.getConnection("");

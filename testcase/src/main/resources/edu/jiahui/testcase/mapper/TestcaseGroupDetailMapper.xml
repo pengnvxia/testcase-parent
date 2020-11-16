@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.jiahui.testcase.mapper.TestcaseGroupDetailMapper" >
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.TestcaseGroupDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="scope" property="scope" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
+    <result column="database_id" property="databaseId" jdbcType="INTEGER" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, group_id, scope, type, name, value, database_id, created_at, updated_at, created_by,
+    updated_by
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from testcase_group_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List"/>
+    from testcase_group_detail
+    where group_id=#{groupId}
+  </select>
+
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseGroupDetail">
+    insert into testcase_group_detail
+    (group_id, scope, type, name, value, database_id, created_at, updated_at, created_by,
+    updated_by)
+    values
+    <foreach collection="testcaseGroupDetails" item="item" separator=",">
+      (#{item.groupId},#{item.scope},#{item.type},#{item.name},#{item.value},#{item.databaseId},#{item.createdAt},
+      #{item.updatedAt},#{item.createdBy},#{item.updatedBy})
+    </foreach>
+  </insert>
+
+  <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseGroupDetail" useGeneratedKeys="true" keyProperty="id">
+    insert into testcase_group_detail
+    (group_id, scope, type, name, value, database_id, created_at, updated_at, created_by,
+    updated_by)
+    values
+    (#{groupId},#{scope},#{type},#{name},#{value},#{databaseId},#{createdAt},
+      #{updatedAt},#{createdBy},#{updatedBy})
+  </insert>
+
+  <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseGroupDetail">
+    update testcase_group_detail set group_id=#{groupId},scope=#{scope},type=#{type},
+    name=#{name},value=#{value},database_id=#{databaseId}
+    where id=#{id}
+  </update>
+
+  <delete id="deleteNotIn">
+    delete from testcase_group_detail
+    where group_id=#{groupId}
+    <if test="ids!=null">
+      and id not in
+      <foreach collection="ids" item="id" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+  </delete>
+
+  <delete id="delete">
+    delete from testcase_group_detail
+    where
+    group_id=#{groupId}
+  </delete>
+
+</mapper>

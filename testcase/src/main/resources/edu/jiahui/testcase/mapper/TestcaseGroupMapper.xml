@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.jiahui.testcase.mapper.TestcaseGroupMapper" >
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.TestcaseGroup" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="env_id" property="envId" jdbcType="INTEGER" />
+    <result column="config_ids" property="configIds" jdbcType="VARCHAR" />
+    <result column="testcase_ids" property="testcaseIds" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, group_name, env_id, config_ids, testcase_ids, created_at, updated_at, created_by,
+    updated_by
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from testcase_group
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="select" parameterType="edu.jiahui.testcase.domain.request.SearchGroupReq" resultType="edu.jiahui.testcase.domain.response.SearchGroupRes">
+    select
+    testcase_group.id,group_name as groupName,testcase_group.project_id as projectId,
+    project.project_name as projectName,testcase_group.env_id as envId,testcase_group.updated_by as updatedBy,
+    testcase_group.updated_at as updatedAt,testcase_group.description
+    from testcase_group
+    left join project
+    on testcase_group.project_id=project.id
+     where group_name like %${gourpName}%
+     and project.project_name like %${projectName}%
+    and testcase_group.env_id = #{envId}
+    and testcase_group.updated_by=#{lastUpdatedBy}
+  </select>
+
+  <select id="exitName">
+    select count(*) from testcase_group where group_name=#{groupName}
+    <if test="id!=null">
+      and id!=#{id}
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseGroup" useGeneratedKeys="true" keyProperty="id">
+    insert into
+    testcase_group
+    (group_name, env_id, config_ids, testcase_ids, created_at, updated_at, created_by,
+    updated_by,project_id) values (#{groupName},#{envId},#{configIds},#{testcaseIds},#{createdAt},#{updatedAt},#{createdBy},#{updatedBy},#{projectId})
+  </insert>
+
+  <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseGroup">
+    update testcase_group set group_name=#{groupName},env_id=#{envId},config_ids=#{configIds},
+    testcase_ids=#{testcaseIds},project_id=#{projectId}
+    where id=#{id}
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from testcase_group where id=#{id}
+  </delete>
+
+</mapper>

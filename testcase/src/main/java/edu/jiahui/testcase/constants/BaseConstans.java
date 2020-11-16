@@ -20,6 +20,7 @@ public class BaseConstans {
         RUN_SQL_ERROR("DB003","执行sql是错误"),
         CONFIG_NAME_EXIT("CONFIG001","配置项名称已经存在"),
         REPORT_NOT_EXIT("REPORT001","报告不存在"),
+        GROUP_NAME_EXIT("GROUP001","用例组名已存在！"),
         ;
 
 

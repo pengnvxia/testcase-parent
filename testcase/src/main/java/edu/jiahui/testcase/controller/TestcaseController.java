@@ -1,10 +1,8 @@
 package edu.jiahui.testcase.controller;
 
 import edu.jiahui.framework.util.ResultCode;
-import edu.jiahui.testcase.domain.request.AddInterfaceInfoReq;
-import edu.jiahui.testcase.domain.request.CreateTestcaseReq;
-import edu.jiahui.testcase.domain.request.RunTestcaseReq;
-import edu.jiahui.testcase.domain.request.TestcaseReq;
+import edu.jiahui.testcase.domain.Testcase;
+import edu.jiahui.testcase.domain.request.*;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.service.PropertiesService;
 import edu.jiahui.testcase.service.TestcaseService;
@@ -134,6 +132,19 @@ public class TestcaseController {
         }
         return ResultCode.getSuccessReturn(null,null,"添加成功！");
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/case/list")
+    public ResultCode caseList(@RequestBody @Valid CaseListReq req){
+        List<Testcase> testcaseList= new ArrayList<>();
+        try{
+            testcaseList=testcaseService.caseList(req);
+        }catch (Exception e){
+            log.error("查询失败{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，请稍后重试!");
+        }
+        return ResultCode.getSuccessReturn(null,null,testcaseList);
+    }
+
 
 //    @RequestMapping(method = RequestMethod.POST, value = "/create/testcase")
 //    public ResultCode<List<String>> createTestcase(@RequestBody @Valid CreateTestcaseReq req){

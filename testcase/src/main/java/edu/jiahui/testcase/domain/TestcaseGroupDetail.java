@@ -7,20 +7,26 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Testcase {
+public class TestcaseGroupDetail {
+
     private Integer id;
 
-    private String testcaseName;
+    private Integer groupId;
 
-    private String url;
+    private String scope;
 
-    private Integer envId;
+    private String type;
 
-    private String configIds;
+    private String name;
+
+    private String value;
+
+    private Integer databaseId;
 
     private Date createdAt;
 
@@ -29,11 +35,5 @@ public class Testcase {
     private String createdBy;
 
     private String updatedBy;
-
-    private Integer testcaseGroupId;
-
-    private Integer interfaceId;
-
-    private String method;
 
 }

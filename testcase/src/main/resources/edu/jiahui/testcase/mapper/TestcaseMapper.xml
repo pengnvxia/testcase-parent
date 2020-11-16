@@ -34,6 +34,16 @@
     where interface_id=#{interfaceId}
   </select>
 
+  <select id="selectByIds" parameterType="edu.jiahui.testcase.domain.request.CaseListReq" resultType="edu.jiahui.testcase.domain.Testcase">
+    select
+    testcase.id,testcase.testcase_name as testcaseName
+    from testcase inner join interfaces
+    on testcase.interface_id=interfaces.id
+     where interfaces.repositoryId=#{repositoryId}
+      and interfaces.moduleId=#{moduleId}
+      and interfaces.env_id=#{envId}
+  </select>
+
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Testcase" useGeneratedKeys="true" keyProperty="id">
     insert into testcase (testcase_name,env_id,config_ids,interface_id,url,method) values
     (#{testcaseName},#{envId},#{configIds},#{interfaceId},#{url},#{method})
