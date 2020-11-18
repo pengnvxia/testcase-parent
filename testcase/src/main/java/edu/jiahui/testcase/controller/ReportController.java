@@ -23,11 +23,11 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @RequestMapping(method = RequestMethod.GET,value = "/list/{id}")
-    public ResultCode list(@PathVariable("id")Integer id){
+    @RequestMapping(method = RequestMethod.GET,value = "/list/{id}/{isGroup}")
+    public ResultCode list(@PathVariable("id")Integer id,@PathVariable("isGroup") Integer isGroup){
         List<ReportRes.Report> res= new ArrayList<>();
         try{
-            res=reportService.reportList(id);
+            res=reportService.reportList(id,isGroup);
         }catch (Exception e){
             log.error("查询报告列表异常:{}",e.getMessage());
             return ResultCode.getFailure(null,e.getMessage());

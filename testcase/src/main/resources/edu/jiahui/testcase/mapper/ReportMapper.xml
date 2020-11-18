@@ -11,6 +11,7 @@
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
     <result column="result" property="result" jdbcType="INTEGER" />
     <result column="report_link" property="reportLink" jdbcType="VARCHAR" />
+    <result column="is_group" property="isGroup" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="edu.jiahui.testcase.domain.Report" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
@@ -35,11 +36,11 @@
     <include refid="Base_Column_List" />,
     <include refid="Blob_Column_List"/>
     from report
-    where testcase_id = #{id,jdbcType=INTEGER}
+    where testcase_id = #{id,jdbcType=INTEGER} and is_group=#{isGroup}
     order by created_at desc
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Report">
-    insert into report (testcase_id,group_id,content,result) values (#{testcaseId},#{groupId},#{content},#{result})
+    insert into report (testcase_id,group_id,content,result,is_group) values (#{testcaseId},#{groupId},#{content},#{result},#{isGroup})
   </insert>
 </mapper>

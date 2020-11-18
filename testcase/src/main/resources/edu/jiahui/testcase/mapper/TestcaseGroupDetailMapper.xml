@@ -35,22 +35,20 @@
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseGroupDetail">
     insert into testcase_group_detail
-    (group_id, scope, type, name, value, database_id, created_at, updated_at, created_by,
+    (group_id, scope, type, name, value, database_id, created_by,
     updated_by)
     values
     <foreach collection="testcaseGroupDetails" item="item" separator=",">
-      (#{item.groupId},#{item.scope},#{item.type},#{item.name},#{item.value},#{item.databaseId},#{item.createdAt},
-      #{item.updatedAt},#{item.createdBy},#{item.updatedBy})
+      (#{item.groupId},#{item.scope},#{item.type},#{item.name},#{item.value},#{item.databaseId},#{item.createdBy},#{item.updatedBy})
     </foreach>
   </insert>
 
   <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseGroupDetail" useGeneratedKeys="true" keyProperty="id">
     insert into testcase_group_detail
-    (group_id, scope, type, name, value, database_id, created_at, updated_at, created_by,
+    (group_id, scope, type, name, value, database_id, created_by,
     updated_by)
     values
-    (#{groupId},#{scope},#{type},#{name},#{value},#{databaseId},#{createdAt},
-      #{updatedAt},#{createdBy},#{updatedBy})
+    (#{groupId},#{scope},#{type},#{name},#{value},#{databaseId},#{createdBy},#{updatedBy})
   </insert>
 
   <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseGroupDetail">

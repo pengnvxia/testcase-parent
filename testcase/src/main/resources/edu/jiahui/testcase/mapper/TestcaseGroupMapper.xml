@@ -15,7 +15,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, group_name, env_id, config_ids, testcase_ids, created_at, updated_at, created_by,
-    updated_by
+    updated_by,project_id
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -39,7 +39,7 @@
     and testcase_group.updated_by=#{lastUpdatedBy}
   </select>
 
-  <select id="exitName">
+  <select id="exitName" resultType="java.lang.Integer">
     select count(*) from testcase_group where group_name=#{groupName}
     <if test="id!=null">
       and id!=#{id}
@@ -49,8 +49,8 @@
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseGroup" useGeneratedKeys="true" keyProperty="id">
     insert into
     testcase_group
-    (group_name, env_id, config_ids, testcase_ids, created_at, updated_at, created_by,
-    updated_by,project_id) values (#{groupName},#{envId},#{configIds},#{testcaseIds},#{createdAt},#{updatedAt},#{createdBy},#{updatedBy},#{projectId})
+    (group_name, env_id, config_ids, testcase_ids, created_by,
+    updated_by,project_id) values (#{groupName},#{envId},#{configIds},#{testcaseIds},#{createdBy},#{updatedBy},#{projectId})
   </insert>
 
   <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseGroup">
@@ -62,5 +62,7 @@
   <delete id="delete" parameterType="java.lang.Integer">
     delete from testcase_group where id=#{id}
   </delete>
+
+
 
 </mapper>

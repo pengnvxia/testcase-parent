@@ -17,6 +17,7 @@ import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.mapper.*;
 import edu.jiahui.testcase.utils.JDBCUtil;
 import edu.jiahui.testcase.utils.ShellUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,8 +35,7 @@ public class TestcaseService {
     @Resource
     private DockerConstants dockerConstants;
 
-    @Resource
-    private PythonConstants pythonConstants;
+
 
     @Resource
     private TestcaseMapper testcaseMapper;
@@ -63,6 +63,9 @@ public class TestcaseService {
 
     @Resource
     private HttpClientTemplate httpClientTemplate;
+
+    @Autowired
+    private CaseService caseService;
 
 
     public void addTestcase(Integer id,TestcaseReq req){
@@ -511,210 +514,16 @@ public class TestcaseService {
 
 
     public void runTestcase(Integer envId,Integer projectId,Integer testcaseId,Boolean flag){
-        //初始化数据库
-//        String testcaseDb= testcaseDbMapper.selectByTestcaseId(testcaseId);
-//        List dbIds = JSON.parseArray(testcaseDb,String.class);
-//        initDatabase(dbIds); 先注掉，数据库方案还未确定
-        //拼接用例数据
         Project project = projectMapper.selectByPrimaryKey(projectId);
-        String baseUrl = envId==1 ? project.getDevAddress():project.getProdAddress();
         Testcase testcase = testcaseMapper.selectByPrimaryKey(testcaseId);
-        JSONObject totalVariableJson = new JSONObject();
-        if(!testcase.getConfigIds().equals("") && testcase.getConfigIds()!=null){
-            List<Integer> configIds = JSON.parseArray(testcase.getConfigIds(),Integer.class);
-            if(configIds.size()>0){
-                for(Integer configId: configIds){
-                    List<TestcaseConfigDetail> testcaseConfigDetailList = testcaseConfigDetailMapper.selectByConfigId(configId);
-                    for(TestcaseConfigDetail testcaseConfigDetail: testcaseConfigDetailList){
-                        totalVariableJson.put(testcaseConfigDetail.getName(),testcaseConfigDetail.getValue());
-                    }
-                }
-            }
-        }
-//        if(testcase.getConfigIds()!=null && testcase.getConfigIds().length()>0){
-//            List<String> configIdsList = Arrays.asList(testcase.getConfigIds());
-//            for(String configId: configIdsList){
-//                List<TestcaseConfigDetail> testcaseConfigDetailList = testcaseConfigDetailMapper.selectByConfigId(Integer.parseInt(configId));
-//                for(TestcaseConfigDetail testcaseConfigDetail: testcaseConfigDetailList){
-//                    totalVariableJson.put(testcaseConfigDetail.getName(),testcaseConfigDetail.getValue());
-//                }
-//            }
-//        }
-
-        List<TestcaseDetail> testcaseDetailList = testcaseDetailMapper.selectByTestcaseId(testcaseId);
-        JSONObject variablesJson= new JSONObject();
-        JSONObject reqHeadersJson= new JSONObject();
-        JSONObject reqParamsJson= new JSONObject();
-        JSONObject requestBodyJson= new JSONObject();
-        JSONArray requestBodyJsonArray= new JSONArray();
-        JSONObject configParametersJson= new JSONObject();
-        List validateList = new ArrayList();
-        if(testcaseDetailList.size()<=0){
-            throw (new ClientException(BaseConstans.BUSI_CODE.CASEDETAIL_NOT_EXIT.getCode(),BaseConstans.BUSI_CODE.CASEDETAIL_NOT_EXIT.getMsg()));
-        }else {
-            for(TestcaseDetail testcaseDetail: testcaseDetailList){
-                if(testcaseDetail.getScope().equals("setupHooks")){
-                    //执行sql,只执行添加删除sql
-                    DatabaseWithBLOBs databaseInfo =databaseMapper.selectByPrimaryKey(testcaseDetail.getDatabaseId());
-                    String databaseAddress = databaseInfo.getHost()+":"+databaseInfo.getPort();
-                    Connection conn = JDBCUtil.getConnection(databaseAddress,databaseInfo.getDbName(),databaseInfo.getUsername(),databaseInfo.getPassword());
-                    try {
-                        PreparedStatement pst = conn.prepareStatement(testcaseDetail.getValue());
-                        pst.execute();
-                        JDBCUtil.close(pst, conn);
-                    }catch (SQLException e){
-                        throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(),e.getMessage()));
-                    }catch (Exception e){
-                        throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(),e.getMessage()));
-
-                    }
-                }
-
-                if(testcaseDetail.getScope().equals("parameters")){
-                    //设置多个用例
-
-//                    configParametersJson.put(testcaseDetail.getName(),JSON.parseArray(testcaseDetail.getValue(),String.class));
-                    configParametersJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
-                }
-
-                if(testcaseDetail.getScope().equals("variables")){
-                    if(testcaseDetail.getType().equals("Sql")){
-//                        List<String> keyList = Arrays.asList(testcaseDetail.getName());
-                        List keyList =JSON.parseArray(testcaseDetail.getName(),String.class);
-//                        执行后赋值
-                        DatabaseWithBLOBs databaseInfo =databaseMapper.selectByPrimaryKey(testcaseDetail.getDatabaseId());
-                        String databaseAddress = databaseInfo.getHost()+":"+databaseInfo.getPort();
-                        Connection conn = JDBCUtil.getConnection(databaseAddress,databaseInfo.getDbName(),databaseInfo.getUsername(),databaseInfo.getPassword());
-                        ResultSet rs = null;
-                        try {
-                            PreparedStatement pst = conn.prepareStatement(testcaseDetail.getValue());
-                            rs = pst.executeQuery();
-                            while (rs.next()){
-                                for(Object k: keyList){
-                                    variablesJson.put(k.toString(),rs.getString(k.toString()));
-                                }
-                            }
-
-                            JDBCUtil.close(pst, conn);
-                        }catch (SQLException e){
-                            throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(),e.getMessage()));
-                        }catch (Exception e){
-                            throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(),e.getMessage()));
-                        }
-
-                    }else {
-                        variablesJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
-                    }
-                }
-
-                if(testcaseDetail.getScope().equals("reqHeaders")){
-                    reqHeadersJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
-                }
-
-                if(testcaseDetail.getScope().equals("reqParams")){
-                    reqParamsJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
-                }
-
-                if(testcaseDetail.getScope().equals("response")){
-                    JSONObject item = new JSONObject();
-                    String type = null;
-                    if(testcaseDetail.getComparator()!=null){
-                        switch (testcaseDetail.getComparator()){
-                            case "=":
-                                type="eq";
-                                break;
-                            case ">":
-                                type="gt";
-                                break;
-                            case "<":
-                                type="lt";
-                                break;
-                            case ">=":
-                                type="ge";
-                                break;
-                            case "<=":
-                                type="le";
-                                break;
-                            case "!=":
-                                type="ne";
-                                break;
-                            case "contain":
-                                type="contains";
-                                break;
-                            case "notcontain":
-                                type="notcontains";
-                                break;
-                        }
-                    }
-
-                    List actualExceptedList =new ArrayList();
-                    List <String> resultList = nameJoint(testcaseDetail.getId());
-                    if(!resultList.get(0).equals("Object") && !resultList.get(0).equals("Array")){
-                        actualExceptedList.add(resultList.get(1));
-                        switch (resultList.get(0)){
-                            case "Number":
-                                actualExceptedList.add(Integer.parseInt(testcaseDetail.getExpectedValue()));
-                                break;
-                            default:
-                                actualExceptedList.add(testcaseDetail.getExpectedValue());
-                        }
-
-                        item.put(type,actualExceptedList);
-                        validateList.add(item);
-                    }
-                }
-                if(testcaseDetail.getScope().equals("requestBody")){
-                    if(testcaseDetail.getValue().startsWith("[")){
-                        requestBodyJsonArray = JSON.parseArray(testcaseDetail.getValue());
-                    }else {
-                        requestBodyJson = JSON.parseObject(testcaseDetail.getValue());
-                    }
-                }
-            }
-        }
-
-        JSONObject configJson = new JSONObject();
-        configJson.put("name",testcase.getTestcaseName());
-        configJson.put("id",testcase.getTestcaseName());
-        configJson.put("variables",totalVariableJson);
-        JSONObject baseUrlJson = new JSONObject();
-        baseUrlJson.put("base_url",baseUrl);
-        configJson.put("request",baseUrlJson);
-        configJson.put("parameters",configParametersJson);
-
-        JSONObject requestJson = new JSONObject();
-        requestJson.put("headers",reqHeadersJson);
-        requestJson.put("json",requestBodyJson.isEmpty()?requestBodyJsonArray:requestBodyJson);
-        requestJson.put("method",testcase.getMethod());
-        requestJson.put("url",testcase.getUrl());
-        requestJson.put("params",reqParamsJson);
-
-
-
-        JSONObject testJson = new JSONObject();
-        testJson.put("name", testcase.getTestcaseName());
-        testJson.put("request",requestJson);
-        testJson.put("validate",validateList);
-        testJson.put("variables",variablesJson);
-
-
-        JSONObject testcaseConfigJson= new JSONObject();
-        testcaseConfigJson.put("config",configJson);
-
-        JSONObject testcaseTestJson= new JSONObject();
-        testcaseTestJson.put("test",testJson);
-
-        List testcaseList= new ArrayList();
-        testcaseList.add(testcaseConfigJson);
-        testcaseList.add(testcaseTestJson);
+        List testcaseList = caseService.createTestcaseJson(envId,projectId,testcaseId);
         //创建可执行的yaml文件
-        System.out.println(testcaseList);
-        createTestcaseYaml(project.getProjectName(),testcase.getTestcaseName(),testcaseList);
+        caseService.createTestcaseYaml(project.getProjectName(),testcase.getTestcaseName(),testcaseList);
         //执行测试用例
-        String reportContent = execTestcase(project.getProjectName(),testcase.getTestcaseName());
+        String reportContent = caseService.execTestcase(project.getProjectName(),testcase.getTestcaseName());
         Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
         Integer result = status ? 1 : 0;
-        Report report = Report.builder().testcaseId(testcaseId).content(reportContent).result(result).build();
+        Report report = Report.builder().testcaseId(testcaseId).content(reportContent).result(result).isGroup(0).build();
         //报告数据落表
         reportMapper.insert(report);
         //return testcaseList;
@@ -724,75 +533,8 @@ public class TestcaseService {
 //        }
     }
 
-    //逐级拼接response中的名称
-    public List<String> nameJoint(Integer id){
-        TestcaseDetail testcaseDetail = testcaseDetailMapper.selectByPrimaryKey(id);
 
-        if(testcaseDetail.getParentId()!=null){
-            if(testcaseDetail.getArrayIndex()!=null){
-                List resultList = new ArrayList();
-                String type = testcaseDetail.getType();
-                String name = nameJoint(testcaseDetail.getParentId()).get(1)+"."+testcaseDetail.getArrayIndex().toString()+"."+testcaseDetail.getName();
-                resultList.add(type);
-                resultList.add(name);
-                return resultList;
-            }else {
-                List resultList = new ArrayList();
-                String type = testcaseDetail.getType();
-                String name = nameJoint(testcaseDetail.getParentId()).get(1)+"."+testcaseDetail.getName();
-                resultList.add(type);
-                resultList.add(name);
-                return resultList;
-            }
-        }else {
-            List resultList = new ArrayList();
-            String type = testcaseDetail.getType();
-            String name = "content."+testcaseDetail.getName();
-            resultList.add(type);
-            resultList.add(name);
-            return resultList;
-        }
-    }
 
-    public void createTestcaseYaml(String projectName,String testcaseName,List caseList){
-        try {
-            String[] args = new String[]{"python3", pythonConstants.pythonCreateYaml, projectName, testcaseName, JSON.toJSONString(caseList)};
-            Process proc = Runtime.getRuntime().exec(args);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-//                if (String.valueOf(in.readLine()).equals("ok")) {
-//                    result = "0";
-//                }
-            in.close();
-            proc.waitFor();
-        }catch (IOException e){
-            e.printStackTrace();
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
-    }
-
-    public String execTestcase(String projectName,String testcaseName){
-        String reportContent = null;
-        try{
-            String[] args = new String[]{"python3", pythonConstants.pythonRunTest, projectName, testcaseName};
-            Process proc = Runtime.getRuntime().exec(args);
-            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-            String line;
-            while((line=in.readLine())!=null){
-                if(line.startsWith("{")){
-                    reportContent=line;
-                }
-            }
-            in.close();
-            proc.waitFor();
-        }catch (IOException e){
-            e.printStackTrace();
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
-        return reportContent;
-    }
 
     //调用接口方式创建容器，最终使用脚本方式创建容器
 //    public String createMysql(String imageName){
@@ -876,12 +618,6 @@ public class TestcaseService {
 
         return testcaseList;
     }
-
-
-
-
-
-
 
 
 

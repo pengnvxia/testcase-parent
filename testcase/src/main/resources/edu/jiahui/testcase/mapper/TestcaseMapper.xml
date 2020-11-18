@@ -39,7 +39,7 @@
     testcase.id,testcase.testcase_name as testcaseName
     from testcase inner join interfaces
     on testcase.interface_id=interfaces.id
-     where interfaces.repositoryId=#{repositoryId}
+     where interfaces.repositoryId=#{projectId}
       and interfaces.moduleId=#{moduleId}
       and interfaces.env_id=#{envId}
   </select>

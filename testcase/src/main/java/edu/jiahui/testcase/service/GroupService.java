@@ -1,19 +1,25 @@
 package edu.jiahui.testcase.service;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.testcase.constants.BaseConstans;
-import edu.jiahui.testcase.domain.TestcaseGroup;
-import edu.jiahui.testcase.domain.TestcaseGroupDetail;
+import edu.jiahui.testcase.domain.*;
 import edu.jiahui.testcase.domain.request.CreateTestcaseGroupReq;
 import edu.jiahui.testcase.domain.request.SearchGroupReq;
 import edu.jiahui.testcase.domain.response.GroupRes;
 import edu.jiahui.testcase.domain.response.SearchGroupRes;
-import edu.jiahui.testcase.mapper.TestcaseGroupDetailMapper;
-import edu.jiahui.testcase.mapper.TestcaseGroupMapper;
+import edu.jiahui.testcase.mapper.*;
+import edu.jiahui.testcase.utils.JDBCUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +28,25 @@ import java.util.List;
 public class GroupService {
 
     @Resource
+    private ProjectMapper projectMapper;
+
+    @Resource
+    private TestcaseConfigDetailMapper testcaseConfigDetailMapper;
+
+    @Resource
+    private DatabaseMapper databaseMapper;
+
+    @Resource
     private TestcaseGroupMapper testcaseGroupMapper;
 
     @Resource
     private TestcaseGroupDetailMapper testcaseGroupDetailMapper;
+
+    @Resource
+    private ReportMapper reportMapper;
+
+    @Autowired
+    private CaseService caseService;
 
     public List<SearchGroupRes.Group> searchGroupList(SearchGroupReq req){
 
@@ -79,7 +100,7 @@ public class GroupService {
                         .value(crs.getSql())
                         .databaseId(crs.getDatabaseId())
                         .groupId(testcaseGroup.getId())
-                        .scope("setuphooks")
+                        .scope("setupHooks")
                         .build();
                 testcaseGroupDetails.add(td);
             }
@@ -92,6 +113,7 @@ public class GroupService {
             throw (new ClientException(BaseConstans.BUSI_CODE.GROUP_NAME_EXIT.getCode(),BaseConstans.BUSI_CODE.GROUP_NAME_EXIT.getMsg()));
         }
         TestcaseGroup testcaseGroup=TestcaseGroup.builder()
+                .id(req.getId())
                 .envId(req.getEnvId())
                 .projectId(req.getProjectId())
                 .configIds(req.getConfigIds())
@@ -143,7 +165,7 @@ public class GroupService {
                         .name(crs.getSql())
                         .databaseId(crs.getDatabaseId())
                         .groupId(req.getId())
-                        .scope("setuphooks")
+                        .scope("setupHooks")
                         .build();
                 if(testcaseGroupDetail.getId()!=null){
                     testcaseGroupDetailMapper.update(testcaseGroupDetail);
@@ -166,7 +188,7 @@ public class GroupService {
         List<GroupRes.Setuphook> grs = new ArrayList<>();
         if(testcaseGroupDetails.size()>0){
             for(TestcaseGroupDetail tgd: testcaseGroupDetails){
-                if(tgd.getScope()=="variables"){
+                if(tgd.getScope().equals("variables")){
                     GroupRes.Variable variable = GroupRes.Variable.builder()
                             .id(tgd.getId())
                             .name(tgd.getName())
@@ -176,7 +198,7 @@ public class GroupService {
                             .build();
                     grv.add(variable);
                 }
-                if(tgd.getScope()=="parameters"){
+                if(tgd.getScope().equals("parameters")){
                     GroupRes.Parameter parameter = GroupRes.Parameter.builder()
                             .id(tgd.getId())
                             .name(tgd.getName())
@@ -184,7 +206,7 @@ public class GroupService {
                             .build();
                     grp.add(parameter);
                 }
-                if(tgd.getScope()=="setuphooks"){
+                if(tgd.getScope().equals("setupHooks")){
                     GroupRes.Setuphook setuphook = GroupRes.Setuphook.builder()
                             .id(tgd.getId())
                             .sql(tgd.getValue())
@@ -210,6 +232,132 @@ public class GroupService {
         return res;
     }
 
+    public void runGroups(List<Integer> groupIds){
+        if(groupIds.size()<=0){
+            throw (new ClientException(BaseConstans.BUSI_CODE.NOT_RUN_GROUP.getCode(),BaseConstans.BUSI_CODE.NOT_RUN_GROUP.getMsg()));
+        }
+        for(Integer groupId: groupIds){
+            TestcaseGroup testcaseGroup=testcaseGroupMapper.selectByPrimaryKey(groupId);
+            runTestcaseGroup(groupId,testcaseGroup.getProjectId(),testcaseGroup.getEnvId());
+        }
+    }
+
+    public void runTestcaseGroup(Integer id,Integer projectId,Integer envId){
+        //拼接变量等数据
+        List<TestcaseGroupDetail> testcaseGroupDetails = testcaseGroupDetailMapper.selectByGroupId(id);
+        TestcaseGroup testcaseGroup = testcaseGroupMapper.selectByPrimaryKey(id);
+        Project project = projectMapper.selectByPrimaryKey(projectId);
+        String baseUrl = envId==1 ? project.getDevAddress():project.getProdAddress();
+        JSONObject totalVariableJson = new JSONObject();
+        if(!testcaseGroup.getConfigIds().equals("") && testcaseGroup.getConfigIds()!=null){
+            List<Integer> configIds = JSON.parseArray(testcaseGroup.getConfigIds(),Integer.class);
+            if(configIds.size()>0){
+                for(Integer configId: configIds){
+                    List<TestcaseConfigDetail> testcaseConfigDetails= testcaseConfigDetailMapper.selectByConfigId(configId);
+                    for(TestcaseConfigDetail tcd: testcaseConfigDetails){
+                        totalVariableJson.put(tcd.getName(),tcd.getValue());
+                    }
+                }
+            }
+        }
+
+
+
+//        JSONObject variablesJson= new JSONObject();
+        JSONObject configParametersJson= new JSONObject();
+
+        if(testcaseGroupDetails.size()>0){
+            for(TestcaseGroupDetail tgd: testcaseGroupDetails){
+                if(tgd.getScope().equals("setupHooks")){
+                    //执行sql,只执行添加删除sql
+                    DatabaseWithBLOBs databaseInfo =databaseMapper.selectByPrimaryKey(tgd.getDatabaseId());
+                    String databaseAddress = databaseInfo.getHost()+":"+databaseInfo.getPort();
+                    Connection conn = JDBCUtil.getConnection(databaseAddress,databaseInfo.getDbName(),databaseInfo.getUsername(),databaseInfo.getPassword());
+                    try {
+                        PreparedStatement pst = conn.prepareStatement(tgd.getValue());
+                        pst.execute();
+                        JDBCUtil.close(pst, conn);
+                    }catch (SQLException e){
+                        throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(),e.getMessage()));
+                    }catch (Exception e){
+                        throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(),e.getMessage()));
+
+                    }
+                }
+
+                if(tgd.getScope().equals("variables")){
+                    if(tgd.getType().equals("Sql")) {
+                        List keyList = JSON.parseArray(tgd.getName(), String.class);
+                        DatabaseWithBLOBs databaseInfo = databaseMapper.selectByPrimaryKey(tgd.getDatabaseId());
+                        String databaseAddress = databaseInfo.getHost() + ":" + databaseInfo.getPort();
+                        Connection conn = JDBCUtil.getConnection(databaseAddress, databaseInfo.getDbName(), databaseInfo.getUsername(), databaseInfo.getPassword());
+                        ResultSet rs = null;
+                        try {
+                            PreparedStatement pst = conn.prepareStatement(tgd.getValue());
+                            rs = pst.executeQuery();
+                            while (rs.next()) {
+                                for (Object k : keyList) {
+                                    totalVariableJson.put(k.toString(), rs.getString(k.toString()));
+                                }
+                            }
+
+                            JDBCUtil.close(pst, conn);
+                        } catch (SQLException e) {
+                            throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(), e.getMessage()));
+                        } catch (Exception e) {
+                            throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(), e.getMessage()));
+                        }
+                    }else {
+                        totalVariableJson.put(tgd.getName(),tgd.getValue());
+                    }
+                }
+
+                if(tgd.getScope().equals("parameters")){
+                    configParametersJson.put(tgd.getName(),tgd.getValue());
+                }
+            }
+        }
+
+        List testList= new ArrayList();
+        if(!testcaseGroup.getConfigIds().equals("") && testcaseGroup.getConfigIds()!=null){
+            List<Integer> testcaseIds = JSON.parseArray(testcaseGroup.getTestcaseIds(),Integer.class);
+            for(Integer testcaseId: testcaseIds){
+                List testcaseList = caseService.createTestcaseJson(testcaseGroup.getEnvId(),testcaseGroup.getProjectId(),testcaseId);
+                testList.add(testcaseList.get(1));
+            }
+        }
+
+        JSONObject configJson= new JSONObject();
+        configJson.put("id",testcaseGroup.getGroupName());
+        configJson.put("name",testcaseGroup.getGroupName());
+        configJson.put("variables",totalVariableJson);
+        configJson.put("parameters",configParametersJson);
+
+        JSONObject testcaseConfigJson= new JSONObject();
+        testcaseConfigJson.put("config",configJson);
+
+        List testcaseGroupList= new ArrayList();
+        testcaseGroupList.add(testcaseConfigJson);
+       //要改！！！
+        testcaseGroupList.add(testList);
+
+        //创建可执行的yaml文件
+        caseService.createTestcaseYaml(project.getProjectName(),testcaseGroup.getGroupName(),testcaseGroupList);
+        //执行测试用例
+        String reportContent = caseService.execTestcase(project.getProjectName(),testcaseGroup.getGroupName());
+        Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
+        Integer result = status ? 1 : 0;
+        Report report = Report.builder().testcaseId(id).content(reportContent).result(result).isGroup(1).build();
+        //报告数据落表
+        reportMapper.insert(report);
+
+    }
+
+
+
+
     public void deleteGroup(Integer id){
+        testcaseGroupMapper.delete(id);
+        testcaseGroupDetailMapper.delete(id);
     }
 }

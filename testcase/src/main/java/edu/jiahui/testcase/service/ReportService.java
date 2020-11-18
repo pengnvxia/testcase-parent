@@ -20,8 +20,8 @@ public class ReportService {
     @Resource
     private ReportMapper reportMapper;
 
-    public List<ReportRes.Report> reportList(Integer id){
-        List<Report> reportList = reportMapper.selectByTestcaseId(id);
+    public List<ReportRes.Report> reportList(Integer id,Integer isGroup){
+        List<Report> reportList = reportMapper.selectByTestcaseId(id,isGroup);
         List<ReportRes.Report> res= new ArrayList<>();
         for(Report rp: reportList){
             ReportRes.Report report= ReportRes.Report.builder()

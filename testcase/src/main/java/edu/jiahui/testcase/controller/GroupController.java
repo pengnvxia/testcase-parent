@@ -75,4 +75,27 @@ public class GroupController {
         return ResultCode.getSuccessReturn(null,null,res);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/run")
+    public ResultCode runGroup(@RequestBody @Valid List<Integer> req){
+        try {
+            groupService.runGroups(req);
+        }catch (Exception e){
+            log.error("运行用例失败:{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
+        }
+        return ResultCode.getSuccessReturn(null,"运行结束，请在报告列表查看结果！",null);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{id}")
+    public ResultCode deleteGroup(@PathVariable("id") Integer id){
+        try{
+            groupService.deleteGroup(id);
+        }catch (Exception e){
+            log.error("删除用例组失败:{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
+        }
+        return ResultCode.getSuccessReturn(null,"删除成功！",null);
+
+    }
+
 }

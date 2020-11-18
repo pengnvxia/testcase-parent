@@ -32,4 +32,6 @@ public class Report {
     private Integer result;
 
     private String reportLink;
+
+    private Integer isGroup;
 }
