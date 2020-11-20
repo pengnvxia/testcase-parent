@@ -3,6 +3,8 @@ package edu.jiahui.testcase.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.domain.*;
@@ -48,9 +50,15 @@ public class GroupService {
     @Autowired
     private CaseService caseService;
 
-    public List<SearchGroupRes.Group> searchGroupList(SearchGroupReq req){
+    public SearchGroupRes searchGroupList(SearchGroupReq req){
+        SearchGroupRes res = new SearchGroupRes();
+        PageHelper.startPage(req.currentifPage(),req.sizeif());
+        List<SearchGroupRes.Group> testcaseGroups=testcaseGroupMapper.select(req);
+        PageInfo<SearchGroupRes.Group> pageInfo= new PageInfo<SearchGroupRes.Group>(testcaseGroups);
+        res.setGroupList(testcaseGroups);
+        res.setTotal(pageInfo.getTotal());
 
-        return testcaseGroupMapper.select(req);
+        return res;
     }
 
 
@@ -58,6 +66,7 @@ public class GroupService {
         if(testcaseGroupMapper.exitName(req.getGroupName(),null)>0){
             throw (new ClientException(BaseConstans.BUSI_CODE.GROUP_NAME_EXIT.getCode(),BaseConstans.BUSI_CODE.GROUP_NAME_EXIT.getMsg()));
         }
+
         TestcaseGroup testcaseGroup=TestcaseGroup.builder()
                 .groupName(req.getGroupName())
                 .configIds(req.getConfigIds())
@@ -338,16 +347,16 @@ public class GroupService {
 
         List testcaseGroupList= new ArrayList();
         testcaseGroupList.add(testcaseConfigJson);
-       //要改！！！
-        testcaseGroupList.add(testList);
-
+        for(Object obj: testList){
+            testcaseGroupList.add(obj);
+        }
         //创建可执行的yaml文件
         caseService.createTestcaseYaml(project.getProjectName(),testcaseGroup.getGroupName(),testcaseGroupList);
         //执行测试用例
         String reportContent = caseService.execTestcase(project.getProjectName(),testcaseGroup.getGroupName());
         Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
         Integer result = status ? 1 : 0;
-        Report report = Report.builder().testcaseId(id).content(reportContent).result(result).isGroup(1).build();
+        Report report = Report.builder().groupId(id).content(reportContent).result(result).isGroup(1).build();
         //报告数据落表
         reportMapper.insert(report);
 

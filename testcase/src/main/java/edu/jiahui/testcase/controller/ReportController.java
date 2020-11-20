@@ -23,11 +23,11 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @RequestMapping(method = RequestMethod.GET,value = "/list/{id}/{isGroup}")
-    public ResultCode list(@PathVariable("id")Integer id,@PathVariable("isGroup") Integer isGroup){
+    @RequestMapping(method = RequestMethod.GET,value = "/list/{id}")
+    public ResultCode list(@PathVariable("id")Integer id){
         List<ReportRes.Report> res= new ArrayList<>();
         try{
-            res=reportService.reportList(id,isGroup);
+            res=reportService.reportList(id);
         }catch (Exception e){
             log.error("查询报告列表异常:{}",e.getMessage());
             return ResultCode.getFailure(null,e.getMessage());
@@ -35,4 +35,15 @@ public class ReportController {
         return ResultCode.getSuccessReturn(null,null,res);
     }
 
+    @RequestMapping(method = RequestMethod.GET,value = "/group/list/{id}")
+    public ResultCode groupList(@PathVariable("id")Integer id){
+        List<ReportRes.Report> res= new ArrayList<>();
+        try{
+            res=reportService.groupReportList(id);
+        }catch (Exception e){
+            log.error("查询报告列表异常:{}",e.getMessage());
+            return ResultCode.getFailure(null,e.getMessage());
+        }
+        return ResultCode.getSuccessReturn(null,null,res);
+    }
 }

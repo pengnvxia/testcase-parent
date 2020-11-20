@@ -27,7 +27,7 @@ public class GroupController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/search/list")
     public ResultCode searchList(@RequestBody @Valid SearchGroupReq req){
-        List<SearchGroupRes.Group> rg= new ArrayList<>();
+        SearchGroupRes rg= new SearchGroupRes();
         try{
             rg=groupService.searchGroupList(req);
         }catch (Exception e){

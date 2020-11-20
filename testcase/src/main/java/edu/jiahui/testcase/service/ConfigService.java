@@ -58,7 +58,6 @@ public class ConfigService {
         PageInfo<TestcaseConfig> pageInfo= new PageInfo<TestcaseConfig>(testcaseConfigList);
         List<SearchConfigRes.Configs> searchConfigResList = new ArrayList<>();
         for(TestcaseConfig tc: testcaseConfigList){
-
             SearchConfigRes.Configs configs= SearchConfigRes.Configs.builder().id(tc.getId())
                     .configName(tc.getConfigName())
                     .projectId(tc.getProjectId())

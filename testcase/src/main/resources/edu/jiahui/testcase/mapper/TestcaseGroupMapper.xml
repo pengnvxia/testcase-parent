@@ -12,10 +12,11 @@
     <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
     <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, group_name, env_id, config_ids, testcase_ids, created_at, updated_at, created_by,
-    updated_by,project_id
+    updated_by,project_id,description
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -25,7 +26,7 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
-  <select id="select" parameterType="edu.jiahui.testcase.domain.request.SearchGroupReq" resultType="edu.jiahui.testcase.domain.response.SearchGroupRes">
+  <select id="select" parameterType="edu.jiahui.testcase.domain.request.SearchGroupReq" resultType="edu.jiahui.testcase.domain.response.SearchGroupRes$Group">
     select
     testcase_group.id,group_name as groupName,testcase_group.project_id as projectId,
     project.project_name as projectName,testcase_group.env_id as envId,testcase_group.updated_by as updatedBy,
@@ -33,10 +34,22 @@
     from testcase_group
     left join project
     on testcase_group.project_id=project.id
-     where group_name like %${gourpName}%
-     and project.project_name like %${projectName}%
-    and testcase_group.env_id = #{envId}
-    and testcase_group.updated_by=#{lastUpdatedBy}
+     <where>
+     1=1
+     <if test=" groupName != null and groupName != ''">
+       and group_name like '%${groupName}%'
+     </if>
+     <if test="projectName != null and projectName != ''">
+       and project.project_name like '%${projectName}%'
+     </if>
+     <if test="envId != null">
+       and testcase_group.env_id = #{envId}
+     </if>
+     <if test="lastUpdatedBy != null and lastUpdatedBy != ''">
+      and testcase_group.updated_by=#{lastUpdatedBy}
+     </if>
+     </where>
+     order by testcase_group.updated_by desc
   </select>
 
   <select id="exitName" resultType="java.lang.Integer">

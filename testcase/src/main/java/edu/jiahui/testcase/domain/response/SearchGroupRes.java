@@ -17,6 +17,8 @@ public class SearchGroupRes {
 
     private List<Group> groupList;
 
+    private Long total;
+
     @Data
     @Builder
     @NoArgsConstructor
@@ -38,5 +40,6 @@ public class SearchGroupRes {
         private Date updatedAt;
 
         private String description;
+
     }
 }
