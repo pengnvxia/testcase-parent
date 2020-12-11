@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.annotations.JsonAdapter;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.domain.*;
@@ -46,6 +47,15 @@ public class GroupService {
 
     @Resource
     private ReportMapper reportMapper;
+
+    @Resource
+    private TestcaseConfigMapper testcaseConfigMapper;
+
+    @Resource
+    private TestcaseMapper testcaseMapper;
+
+    @Resource
+    private InterfacesMapper interfacesMapper;
 
     @Autowired
     private CaseService caseService;
@@ -114,7 +124,9 @@ public class GroupService {
                 testcaseGroupDetails.add(td);
             }
         }
-        testcaseGroupDetailMapper.insert(testcaseGroupDetails);
+        if(testcaseGroupDetails.size()>0){
+            testcaseGroupDetailMapper.insert(testcaseGroupDetails);
+        }
     }
 
     public void editTestcaseGroup(CreateTestcaseGroupReq req){
@@ -226,12 +238,35 @@ public class GroupService {
             }
         }
 
+        List<GroupRes.Config> gcList = new ArrayList<>();
+        if(testcaseGroup.getConfigIds()!=null && testcaseGroup.getTestcaseIds().length()>0){
+            List<Integer> configIds=JSON.parseArray(testcaseGroup.getConfigIds(),Integer.class);
+            for(Integer configId: configIds){
+                GroupRes.Config gc=GroupRes.Config.builder().id(configId)
+                        .configName(testcaseConfigMapper.selectByPrimaryKey(configId).getConfigName()).build();
+                gcList.add(gc);
+            }
+        }
+
+        List<GroupRes.Testcase> gtList = new ArrayList<>();
+        if(testcaseGroup.getTestcaseIds()!=null && testcaseGroup.getTestcaseIds().length()>0){
+            List<Integer> testcaseIds= JSON.parseArray(testcaseGroup.getTestcaseIds(),Integer.class);
+            for(Integer testcaseId: testcaseIds){
+                Testcase testcase=testcaseMapper.selectByPrimaryKey(testcaseId);
+                GroupRes.Testcase gt=GroupRes.Testcase.builder().id(testcase.getInterfaceId())
+                        .interfaceName(interfacesMapper.selectByPrimaryKey(testcase.getInterfaceId()).getName())
+                        .caseId(testcaseId)
+                        .caseName(testcase.getTestcaseName()).build();
+                gtList.add(gt);
+            }
+        }
+
         GroupRes res = GroupRes.builder()
                 .id(id)
                 .envId(testcaseGroup.getEnvId())
                 .projectId(testcaseGroup.getProjectId())
-                .configIds(testcaseGroup.getConfigIds())
-                .testcaseIds(testcaseGroup.getTestcaseIds())
+                .configIds(gcList)
+                .testcaseIds(gtList)
                 .groupName(testcaseGroup.getGroupName())
                 .variables(grv)
                 .parameters(grp)

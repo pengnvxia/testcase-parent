@@ -20,9 +20,9 @@ public class GroupRes {
 
     private String groupName;
 
-    private String configIds;
+    private List<Config> configIds;
 
-    private String testcaseIds;
+    private List<Testcase> testcaseIds;
 
     private Integer envId;
 
@@ -75,6 +75,34 @@ public class GroupRes {
         private String sql;
 
         private Integer databaseId;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Config {
+
+        private Integer id;
+
+        private String configName;
+
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Testcase {
+
+        private Integer id;
+
+        private String interfaceName;
+
+        private Integer caseId;
+
+        private String caseName;
+
     }
 
 }
