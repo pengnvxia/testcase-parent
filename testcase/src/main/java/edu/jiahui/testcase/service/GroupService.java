@@ -293,7 +293,7 @@ public class GroupService {
         Project project = projectMapper.selectByPrimaryKey(projectId);
         String baseUrl = envId==1 ? project.getDevAddress():project.getProdAddress();
         JSONObject totalVariableJson = new JSONObject();
-        if(!testcaseGroup.getConfigIds().equals("") && testcaseGroup.getConfigIds()!=null){
+        if(testcaseGroup.getConfigIds()!=null && !testcaseGroup.getConfigIds().equals("")){
             List<Integer> configIds = JSON.parseArray(testcaseGroup.getConfigIds(),Integer.class);
             if(configIds.size()>0){
                 for(Integer configId: configIds){
@@ -363,7 +363,7 @@ public class GroupService {
         }
 
         List testList= new ArrayList();
-        if(!testcaseGroup.getConfigIds().equals("") && testcaseGroup.getConfigIds()!=null){
+        if(testcaseGroup.getTestcaseIds()!=null && !testcaseGroup.getTestcaseIds().equals("")){
             List<Integer> testcaseIds = JSON.parseArray(testcaseGroup.getTestcaseIds(),Integer.class);
             for(Integer testcaseId: testcaseIds){
                 List testcaseList = caseService.createTestcaseJson(testcaseGroup.getEnvId(),testcaseGroup.getProjectId(),testcaseId);

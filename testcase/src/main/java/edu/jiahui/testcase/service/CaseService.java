@@ -59,7 +59,7 @@ public class CaseService {
 //        JSONObject totalVariableJson = new JSONObject();
         JSONObject variablesJson= new JSONObject();
 
-        if(!testcase.getConfigIds().equals("") && testcase.getConfigIds()!=null){
+        if(testcase.getConfigIds()!=null && !testcase.getConfigIds().equals("")){
             List<Integer> configIds = JSON.parseArray(testcase.getConfigIds(),Integer.class);
             if(configIds.size()>0){
                 for(Integer configId: configIds){
