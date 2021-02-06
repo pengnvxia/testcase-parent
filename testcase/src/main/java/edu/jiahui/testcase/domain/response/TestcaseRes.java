@@ -39,6 +39,8 @@ public class TestcaseRes {
 
     private List<ReqParam> reqParams;
 
+    private List<Extract> extracts;
+
     private List<Response> responses;
 
     private Map reqBody;
@@ -118,4 +120,19 @@ public class TestcaseRes {
 
         private List<Response> children;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Extract {
+
+        private Integer id;
+
+        private String name;
+
+        private String responseKey;
+
+    }
+
 }

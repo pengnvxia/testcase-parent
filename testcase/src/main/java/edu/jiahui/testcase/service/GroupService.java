@@ -242,9 +242,11 @@ public class GroupService {
         if(testcaseGroup.getConfigIds()!=null && testcaseGroup.getTestcaseIds().length()>0){
             List<Integer> configIds=JSON.parseArray(testcaseGroup.getConfigIds(),Integer.class);
             for(Integer configId: configIds){
-                GroupRes.Config gc=GroupRes.Config.builder().id(configId)
-                        .configName(testcaseConfigMapper.selectByPrimaryKey(configId).getConfigName()).build();
-                gcList.add(gc);
+                if(testcaseConfigMapper.selectByPrimaryKey(configId)!=null){
+                    GroupRes.Config gc=GroupRes.Config.builder().id(configId)
+                            .configName(testcaseConfigMapper.selectByPrimaryKey(configId).getConfigName()).build();
+                    gcList.add(gc);
+                }
             }
         }
 

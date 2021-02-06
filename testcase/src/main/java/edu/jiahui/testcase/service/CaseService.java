@@ -86,6 +86,7 @@ public class CaseService {
         JSONObject requestBodyJson= new JSONObject();
         JSONArray requestBodyJsonArray= new JSONArray();
         JSONObject configParametersJson= new JSONObject();
+        List extractList= new ArrayList();
         List validateList = new ArrayList();
         if(testcaseDetailList.size()<=0){
             throw (new ClientException(BaseConstans.BUSI_CODE.CASEDETAIL_NOT_EXIT.getCode(),BaseConstans.BUSI_CODE.CASEDETAIL_NOT_EXIT.getMsg()));
@@ -153,6 +154,12 @@ public class CaseService {
                     reqParamsJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
                 }
 
+                if(testcaseDetail.getScope().equals("extract")){
+                    JSONObject item = new JSONObject();
+                    item.put(testcaseDetail.getName(),testcaseDetail.getValue());
+                    extractList.add(item);
+                }
+
                 if(testcaseDetail.getScope().equals("response")){
                     JSONObject item = new JSONObject();
                     String type = null;
@@ -190,6 +197,7 @@ public class CaseService {
                     if(!resultList.get(0).equals("Object") && !resultList.get(0).equals("Array")){
                         actualExceptedList.add(resultList.get(1));
                         switch (resultList.get(0)){
+                            //处理整数和小数
                             case "Number":
                                 actualExceptedList.add(Integer.parseInt(testcaseDetail.getExpectedValue()));
                                 break;
@@ -234,6 +242,7 @@ public class CaseService {
         testJson.put("request",requestJson);
         testJson.put("validate",validateList);
         testJson.put("variables",variablesJson);
+        testJson.put("extract",extractList);
 
 
         JSONObject testcaseConfigJson= new JSONObject();

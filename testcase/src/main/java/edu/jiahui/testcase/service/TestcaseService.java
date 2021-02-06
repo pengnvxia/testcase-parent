@@ -144,6 +144,17 @@ public class TestcaseService {
             testcaseDetailList.add(testcaseDetail);
         }
 
+        if(req.getExtracts()!=null && req.getExtracts().size()>0){
+            for(TestcaseReq.Extract extract:req.getExtracts()){
+                TestcaseDetail testcaseDetail = new TestcaseDetail();
+                testcaseDetail.setScope("extract");
+                testcaseDetail.setName(extract.getName());
+                testcaseDetail.setValue(extract.getResponseKey());
+                testcaseDetail.setTestcaseId(testcaseId);
+                testcaseDetailList.add(testcaseDetail);
+            }
+        }
+
         testcaseDetailMapper.insert(testcaseDetailList);
 
         if(req.getResponses()!=null && req.getResponses().size()>0){
@@ -159,6 +170,7 @@ public class TestcaseService {
 //                testcaseDetailList.add(testcaseDetail);
 //            }
         }
+
     }
 
     public void recursionResponse(List<TestcaseReq.Response> responseItemList,Integer testcaseId,Integer parentId){
@@ -203,6 +215,7 @@ public class TestcaseService {
         List<TestcaseRes.Setuphook> setuphookList = new ArrayList<>();
         List<TestcaseRes.ReqHeader> reqHeaderList = new ArrayList<>();
         List<TestcaseRes.ReqParam> reqParamList = new ArrayList<>();
+        List<TestcaseRes.Extract> extractList = new ArrayList<>();
         List<TestcaseRes.Response> responseList = new ArrayList<>();
         Map reqBodyMap = new HashMap();
         if(testcaseDetailList.size()>0){
@@ -246,6 +259,13 @@ public class TestcaseService {
                         reqParam.setValue(testcaseDetail.getValue());
                         reqParamList.add(reqParam);
                         break;
+                    case "extract":
+                        TestcaseRes.Extract extract = new TestcaseRes.Extract();
+                        extract.setId(testcaseDetail.getId());
+                        extract.setName(testcaseDetail.getName());
+                        extract.setResponseKey(testcaseDetail.getValue());
+                        extractList.add(extract);
+                        break;
                     case "response":
                         if(testcaseDetail.getParentId()==null || testcaseDetail.getParentId().equals("")){
                             responseList.add(recursionSearchResponse(testcaseDetail));
@@ -263,6 +283,7 @@ public class TestcaseService {
         testcaseRes.setSetuphooks(setuphookList);
         testcaseRes.setReqHeaders(reqHeaderList);
         testcaseRes.setReqParams(reqParamList);
+        testcaseRes.setExtracts(extractList);
         testcaseRes.setResponses(responseList);
         testcaseRes.setReqBody(reqBodyMap);
         return testcaseRes;
@@ -418,6 +439,28 @@ public class TestcaseService {
             testcaseDetailMapper.deleteNotIn(ids,id,null,"reqParams");
         }else {
             testcaseDetailMapper.deleteNotIn(null,id,null,"reqParams");
+        }
+
+        if(req.getExtracts()!=null && req.getExtracts().size()>0){
+            List<Integer> ids = new ArrayList<>();
+            for(TestcaseReq.Extract et : req.getExtracts()){
+                TestcaseDetail testcaseDetail= new TestcaseDetail();
+                testcaseDetail.setScope("extract");
+                testcaseDetail.setName(et.getName());
+                testcaseDetail.setValue(et.getResponseKey());
+                if(et.getId()!=null){
+                    testcaseDetail.setId(et.getId());
+                    testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
+                    ids.add(et.getId());
+                }else {
+                    testcaseDetail.setTestcaseId(id);
+                    testcaseDetailMapper.insertOne(testcaseDetail);
+                    ids.add(testcaseDetail.getId());
+                }
+            }
+            testcaseDetailMapper.deleteNotIn(ids,id,null,"extract");
+        }else {
+            testcaseDetailMapper.deleteNotIn(null,id,null,"extract");
         }
 
         if(req.getResponses()!=null && req.getResponses().size()>0){

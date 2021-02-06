@@ -39,6 +39,8 @@ public class TestcaseReq {
 
     private Map reqBody;
 
+    private List<Extract> extracts;
+
 
     @Data
     public static class Variable {
@@ -125,5 +127,19 @@ public class TestcaseReq {
         private String expectedValue;
 
         private List<Response> children;
+    }
+
+    @Data
+    public static class Extract {
+
+        private Integer id;
+
+        @NotBlank
+        private String name;
+
+        @NotBlank
+        private String responseKey;
+
+
     }
 }

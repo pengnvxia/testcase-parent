@@ -50,7 +50,7 @@
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.Testcase" >
-    update testcase set testcase_name=#{testcaseName},env_id=#{envId},config_ids=#{configIds},method=#{method}
+    update testcase set testcase_name=#{testcaseName},env_id=#{envId},config_ids=#{configIds},method=#{method},url=#{url}
     where id=#{id}
   </update>
 

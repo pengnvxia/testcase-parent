@@ -40,7 +40,7 @@ public class TestcaseController {
         return  ResultCode.getSuccessReturn(null, "添加成功！", null);
     }
 
-    //用接口id查询用例信息
+    //用接口id查询用例信息 新增用例时使用
     @RequestMapping(method = RequestMethod.GET, value= "/{id}" )
     public ResultCode interfaceInfo(@PathVariable("id")Integer id){
         TestcaseRes testcaseRes= new TestcaseRes();
@@ -64,7 +64,7 @@ public class TestcaseController {
         return ResultCode.getSuccessReturn(null,"删除成功！",null);
     }
 
-    //用用例id查询用例信息
+    //用用例id查询用例信息 更新用例时使用
     @RequestMapping(method = RequestMethod.GET, value= "/case/{id}")
     public ResultCode testcaseInfo(@PathVariable("id")Integer id){
         TestcaseRes testcaseRes = new TestcaseRes();
@@ -77,6 +77,7 @@ public class TestcaseController {
         return ResultCode.getSuccessReturn(null,null,testcaseRes);
     }
 
+    //更新用例接口
     @RequestMapping(method = RequestMethod.POST, value = "/edit/{id}")
     public ResultCode updateTestcase(@PathVariable("id")Integer id,@RequestBody @Valid TestcaseReq req){
         try{
