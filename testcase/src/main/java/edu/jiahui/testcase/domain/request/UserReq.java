@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserReq {
 
-    @NotNull(message = "fullname不能为空")
-    private String fullname;
+    @NotBlank(message = "username不能为空")
+    private String username;
 
     @NotBlank(message = "password不能为空")
     private String password;
@@ -18,6 +18,5 @@ public class UserReq {
     private String email;
 
     private String token;
-
 
 }

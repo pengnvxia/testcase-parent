@@ -102,9 +102,9 @@ public class CaseService {
                         pst.execute();
                         JDBCUtil.close(pst, conn);
                     }catch (SQLException e){
-                        throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(),e.getMessage()));
+                        throw (new ClientException(BaseConstans.BUSI_CODE.SQL_ERROR.getCode(),BaseConstans.BUSI_CODE.SQL_ERROR.getMsg()));
                     }catch (Exception e){
-                        throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(),e.getMessage()));
+                        throw (new ClientException(BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getCode(),BaseConstans.BUSI_CODE.RUN_SQL_ERROR.getMsg()));
 
                     }
                 }

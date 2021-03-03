@@ -19,18 +19,28 @@
     <result column="insert_sql" property="insertSql" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, db_name, host, port, username, password, env_id, created_by, updated_by, created_at,
-    updated_at
+    id, db_name, host, port, username, password, env_id, created_by, updated_by, created_at,updated_at,create_table_sql,insert_sql
   </sql>
-  <sql id="Blob_Column_List" >
-    create_table_sql, insert_sql
-  </sql>
+
+  <select id="select" resultMap="ResultMapWithBLOBs" parameterType="edu.jiahui.testcase.domain.request.SearchDatabaseReq">
+    select id,db_name,host,port,username,env_id,updated_by,updated_at
+    from
+    db
+    <where>
+      1=1
+      <if test="envId !=null and envId != ''">
+        and env_id=#{envId}
+      </if>
+      <if test="dbName != null and dbName != ''">
+        and db_name like '%${dbName}%'
+      </if>
+    </where>
+    order by updated_at desc
+  </select>
 
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from db
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -38,8 +48,6 @@
   <select id="selectByIds" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from db
     <if test="ids!=null">
     where id in
@@ -48,4 +56,36 @@
     </foreach>
     </if>
   </select>
+
+  <select id="selectByDbnameEnvid" parameterType="edu.jiahui.testcase.domain.request.DatabaseReq" resultType="java.lang.Integer">
+    select count(*)
+     from db
+     where db_name=#{dbName} and env_id=#{envId}
+  </select>
+
+  <select id="selectByDbnameEnvidAndId" parameterType="edu.jiahui.testcase.domain.request.DatabaseReq" resultType="java.lang.Integer">
+    select count(*)
+    from db
+    where db_name=#{dbName} and env_id=#{envId} and id &lt;&gt; #{id}
+  </select>
+
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.request.DatabaseReq">
+    insert into db
+    (db_name,host,port,username,password,env_id,create_table_sql,insert_sql)
+    values
+    (#{dbName},#{host},#{port},#{username},#{password},#{envId},#{createTableSql},#{insertSql})
+  </insert>
+
+  <update id="update" parameterType="edu.jiahui.testcase.domain.request.DatabaseReq">
+    update db
+    set
+    db_name=#{dbName},host=#{host},port=#{port},username=#{username},password=#{password},
+    env_id=#{envId},create_table_sql=#{createTableSql},insert_sql=#{insertSql}
+    where id=#{id}
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from db
+    where id=#{id,jdbcType=INTEGER}
+  </delete>
 </mapper>

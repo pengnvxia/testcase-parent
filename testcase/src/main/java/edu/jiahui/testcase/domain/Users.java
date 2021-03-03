@@ -1,14 +1,20 @@
 package edu.jiahui.testcase.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Users {
     private Integer id;
 
-    private String fullname;
+    private String username;
 
     private String password;
 

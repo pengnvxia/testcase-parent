@@ -22,6 +22,9 @@ public class BaseConstans {
         REPORT_NOT_EXIT("REPORT001","报告不存在"),
         GROUP_NAME_EXIT("GROUP001","用例组名已存在！"),
         NOT_RUN_GROUP("GROUP002","没有要运行的用例组!"),
+        DB_EXIT("DB001","数据库信息已经存在"),
+        USER_NOT_EXIT("USER001","用户名或密码错误！"),
+        USER_EXIT("USER002","用户已经存在！"),
         ;
 
 
