@@ -21,8 +21,8 @@
     select count(*) from users where username=#{username}
   </select>
 
-  <select id="selectByNameAndPassword" parameterType="edu.jiahui.testcase.domain.Users" resultType="java.lang.Integer">
-    select id from users where username=#{username} and password=#{password} limit 1
+  <select id="selectByNameAndPassword" parameterType="edu.jiahui.testcase.domain.Users" resultType="edu.jiahui.testcase.domain.response.UserRes">
+    select id as userId,username from users where username=#{username} and password=#{password} limit 1
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Users">

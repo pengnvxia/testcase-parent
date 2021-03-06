@@ -21,6 +21,7 @@ public class ReportService {
     private ReportMapper reportMapper;
 
     public List<ReportRes.Report> reportList(Integer id){
+
         List<Report> reportList = reportMapper.selectByTestcaseId(id);
         List<ReportRes.Report> res= new ArrayList<>();
         for(Report rp: reportList){

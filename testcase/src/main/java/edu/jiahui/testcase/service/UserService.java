@@ -31,18 +31,17 @@ public class UserService {
 //    }
 
     public UserRes login(UserReq req){
-        UserRes res=new UserRes();
         Users user = Users.builder()
                 .username(req.getUsername())
                 .password(req.getPassword())
                 .build();
-        Integer userId=usersMapper.selectByNameAndPassword(user);
-        if(userId==null || userId<=0){
+        UserRes res=usersMapper.selectByNameAndPassword(user);
+        if(res==null || res.getUserId()==null || res.getUserId()<=0){
             throw (new ClientException(BaseConstans.BUSI_CODE.USER_NOT_EXIT.getCode(),BaseConstans.BUSI_CODE.USER_NOT_EXIT.getMsg()));
         }else {
             String userToken=createToken(user.getUsername());
             user.setToken(userToken);
-            user.setId(userId);
+            user.setId(res.getUserId());
             usersMapper.updateToken(user);
             res.setToken(userToken);
         }
@@ -60,5 +59,10 @@ public class UserService {
         }else {
             usersMapper.insert(users);
         }
+    }
+
+    public void logout(Integer userId){
+        Users user=Users.builder().id(userId).token(null).build();
+        usersMapper.updateToken(user);
     }
 }

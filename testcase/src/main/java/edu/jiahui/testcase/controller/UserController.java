@@ -1,6 +1,10 @@
 package edu.jiahui.testcase.controller;
+import com.alibaba.fastjson.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.util.ResultCode;
+import edu.jiahui.testcase.domain.request.LogoutReq;
 import edu.jiahui.testcase.domain.request.UserReq;
 import edu.jiahui.testcase.domain.response.UserRes;
 import edu.jiahui.testcase.service.UserService;
@@ -49,6 +53,17 @@ public class UserController {
             return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
         }
         return ResultCode.getSuccessReturn(null,null,res);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/logout")
+    public ResultCode logout(@RequestBody @Valid LogoutReq req){
+        try {
+            userService.logout(req.getId());
+        }catch (Exception e){
+            log.error("登出异常:{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
+        }
+        return ResultCode.getSuccessReturn(null,"登出成功！",null);
     }
 
 }

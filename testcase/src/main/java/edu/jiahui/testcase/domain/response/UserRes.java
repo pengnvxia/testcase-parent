@@ -12,5 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRes {
 
+    private Integer userId;
+
+    private String username;
+
     private String token;
 }
