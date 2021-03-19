@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.annotations.JsonAdapter;
 import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.domain.*;
 import edu.jiahui.testcase.domain.request.CreateTestcaseGroupReq;
@@ -83,6 +84,8 @@ public class GroupService {
                 .testcaseIds(req.getTestcaseIds())
                 .envId(req.getEnvId())
                 .projectId(req.getProjectId())
+                .createdBy(ParameterThreadLocal.getUid())
+                .updatedBy(ParameterThreadLocal.getUid())
                 .build();
         testcaseGroupMapper.insert(testcaseGroup);
         List<TestcaseGroupDetail> testcaseGroupDetails=new ArrayList<>();
@@ -95,6 +98,8 @@ public class GroupService {
                         .databaseId(crv.getDatabaseId())
                         .groupId(testcaseGroup.getId())
                         .scope("variables")
+                        .createdBy(ParameterThreadLocal.getUid())
+                        .updatedBy(ParameterThreadLocal.getUid())
                         .build();
                 testcaseGroupDetails.add(td);
             }
@@ -108,6 +113,8 @@ public class GroupService {
                         .value(crp.getValue())
                         .groupId(testcaseGroup.getId())
                         .scope("parameters")
+                        .createdBy(ParameterThreadLocal.getUid())
+                        .updatedBy(ParameterThreadLocal.getUid())
                         .build();
                 testcaseGroupDetails.add(td);
             }
@@ -120,6 +127,8 @@ public class GroupService {
                         .databaseId(crs.getDatabaseId())
                         .groupId(testcaseGroup.getId())
                         .scope("setupHooks")
+                        .createdBy(ParameterThreadLocal.getUid())
+                        .updatedBy(ParameterThreadLocal.getUid())
                         .build();
                 testcaseGroupDetails.add(td);
             }
@@ -140,6 +149,8 @@ public class GroupService {
                 .configIds(req.getConfigIds())
                 .testcaseIds(req.getTestcaseIds())
                 .groupName(req.getGroupName())
+                .createdBy(ParameterThreadLocal.getUid())
+                .updatedBy(ParameterThreadLocal.getUid())
                 .build();
         testcaseGroupMapper.update(testcaseGroup);
         List<Integer> ids=new ArrayList<>();
@@ -153,6 +164,7 @@ public class GroupService {
                         .databaseId(crv.getDatabaseId())
                         .groupId(req.getId())
                         .scope("variables")
+                        .updatedBy(ParameterThreadLocal.getUid())
                         .build();
                 if(testcaseGroupDetail.getId()!=null){
                     testcaseGroupDetailMapper.update(testcaseGroupDetail);
@@ -170,6 +182,7 @@ public class GroupService {
                         .value(crp.getValue())
                         .groupId(req.getId())
                         .scope("parameters")
+                        .updatedBy(ParameterThreadLocal.getUid())
                         .build();
                 if(testcaseGroupDetail.getId()!=null){
                     testcaseGroupDetailMapper.update(testcaseGroupDetail);
@@ -187,6 +200,7 @@ public class GroupService {
                         .databaseId(crs.getDatabaseId())
                         .groupId(req.getId())
                         .scope("setupHooks")
+                        .updatedBy(ParameterThreadLocal.getUid())
                         .build();
                 if(testcaseGroupDetail.getId()!=null){
                     testcaseGroupDetailMapper.update(testcaseGroupDetail);

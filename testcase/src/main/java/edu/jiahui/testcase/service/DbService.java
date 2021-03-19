@@ -6,6 +6,7 @@ import java.util.List;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.domain.Database;
 import edu.jiahui.testcase.domain.DatabaseWithBLOBs;
@@ -56,6 +57,8 @@ public class DbService {
         if(databaseMapper.selectByDbnameEnvid(req)>0){
             throw (new ClientException(BaseConstans.BUSI_CODE.DB_EXIT.getCode(),BaseConstans.BUSI_CODE.DB_EXIT.getMsg()));
         }
+        req.setCreatedBy(ParameterThreadLocal.getUid());
+        req.setUpdatedBy(ParameterThreadLocal.getUid());
         databaseMapper.insert(req);
     }
 
@@ -81,6 +84,7 @@ public class DbService {
         if(databaseMapper.selectByDbnameEnvidAndId(req)>0){
             throw (new ClientException(BaseConstans.BUSI_CODE.DB_EXIT.getCode(),BaseConstans.BUSI_CODE.DB_EXIT.getMsg()));
         }
+        req.setUpdatedBy(ParameterThreadLocal.getUid());
         databaseMapper.update(req);
     }
 

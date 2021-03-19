@@ -21,9 +21,9 @@ public class ProjectReq {
 
     private Date createdAt;
 
-    private String createdBy;
-
     private Date updatedAt;
 
-    private String updatedBy;
+    private Integer createdBy;
+
+    private Integer updatedBy;
 }

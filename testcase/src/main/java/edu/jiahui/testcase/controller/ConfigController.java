@@ -2,6 +2,7 @@ package edu.jiahui.testcase.controller;
 
 
 import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
 import edu.jiahui.framework.util.ResultCode;
 import edu.jiahui.testcase.domain.request.ConfigListReq;
 import edu.jiahui.testcase.domain.request.ConfigReq;

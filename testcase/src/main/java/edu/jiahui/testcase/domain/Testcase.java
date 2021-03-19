@@ -26,9 +26,9 @@ public class Testcase {
 
     private Date updatedAt;
 
-    private String createdBy;
+    private Integer createdBy;
 
-    private String updatedBy;
+    private Integer updatedBy;
 
     private Integer testcaseGroupId;
 

@@ -33,10 +33,10 @@
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
-    insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value)
+    insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value,created_by,updated_by)
     values
     <foreach collection="list" item="item" separator=",">
-    (#{item.scope},#{item.type},#{item.name},#{item.propertiesId},#{item.value},#{item.databaseId},#{item.testcaseId},#{item.comparator},#{item.expectedValue})
+    (#{item.scope},#{item.type},#{item.name},#{item.propertiesId},#{item.value},#{item.databaseId},#{item.testcaseId},#{item.comparator},#{item.expectedValue},#{item.createdBy},#{item.updatedBy})
     </foreach>
   </insert>
 
@@ -63,13 +63,13 @@
 
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.TestcaseDetail">
     update testcase_detail set scope=#{scope},type=#{type},name=#{name},value=#{value},database_id=#{databaseId},comparator=#{comparator},
-    expected_value=#{expectedValue},array_index=#{arrayIndex} where id=#{id}
+    expected_value=#{expectedValue},array_index=#{arrayIndex},created_by=#{createdBy},updated_by=#{updatedBy} where id=#{id}
   </update>
 
   <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseDetail" useGeneratedKeys="true" keyProperty="id">
-        insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value,parent_id,array_index)
+        insert into testcase_detail (scope,type,name,properties_id,value,database_id,testcase_id,comparator,expected_value,parent_id,array_index,created_by,updated_by)
         values
-        (#{scope},#{type},#{name},#{propertiesId},#{value},#{databaseId},#{testcaseId},#{comparator},#{expectedValue},#{parentId},#{arrayIndex})
+        (#{scope},#{type},#{name},#{propertiesId},#{value},#{databaseId},#{testcaseId},#{comparator},#{expectedValue},#{parentId},#{arrayIndex},#{createdBy},#{updatedBy})
   </insert>
 
   <delete id="deleteByTestcaseId" parameterType="java.lang.Integer">

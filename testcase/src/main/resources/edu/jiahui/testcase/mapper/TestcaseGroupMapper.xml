@@ -9,8 +9,8 @@
     <result column="testcase_ids" property="testcaseIds" jdbcType="VARCHAR" />
     <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
-    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
-    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="description" property="description" jdbcType="VARCHAR" />
   </resultMap>
@@ -29,11 +29,13 @@
   <select id="select" parameterType="edu.jiahui.testcase.domain.request.SearchGroupReq" resultType="edu.jiahui.testcase.domain.response.SearchGroupRes$Group">
     select
     testcase_group.id,group_name as groupName,testcase_group.project_id as projectId,
-    project.project_name as projectName,testcase_group.env_id as envId,testcase_group.updated_by as updatedBy,
+    project.project_name as projectName,testcase_group.env_id as envId,users.username as updatedBy,
     testcase_group.updated_at as updatedAt,testcase_group.description
     from testcase_group
     left join project
     on testcase_group.project_id=project.id
+    left join users
+    on testcase_group.updated_by=users.id
      <where>
      1=1
      <if test=" groupName != null and groupName != ''">
@@ -68,7 +70,7 @@
 
   <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseGroup">
     update testcase_group set group_name=#{groupName},env_id=#{envId},config_ids=#{configIds},
-    testcase_ids=#{testcaseIds},project_id=#{projectId}
+    testcase_ids=#{testcaseIds},project_id=#{projectId},updated_by=#{updatedBy}
     where id=#{id}
   </update>
 

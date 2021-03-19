@@ -3,6 +3,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
 import edu.jiahui.framework.util.ResultCode;
 import edu.jiahui.testcase.domain.request.LogoutReq;
 import edu.jiahui.testcase.domain.request.UserReq;
@@ -10,10 +11,7 @@ import edu.jiahui.testcase.domain.response.UserRes;
 import edu.jiahui.testcase.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -55,15 +53,15 @@ public class UserController {
         return ResultCode.getSuccessReturn(null,null,res);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/logout")
-    public ResultCode logout(@RequestBody @Valid LogoutReq req){
+    @RequestMapping(method = RequestMethod.GET, value = "/logout")
+    public ResultCode logout(){
+
         try {
-            userService.logout(req.getId());
+            userService.logout(Integer.parseInt(ParameterThreadLocal.getUid()));
         }catch (Exception e){
             log.error("登出异常:{}",e.getMessage());
             return ResultCode.getFailure(null,"服务器繁忙，请稍后重试！");
         }
         return ResultCode.getSuccessReturn(null,"登出成功！",null);
     }
-
 }

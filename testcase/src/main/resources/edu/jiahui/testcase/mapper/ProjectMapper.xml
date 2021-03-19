@@ -48,7 +48,7 @@
     (project_name,dev_address,prod_address,description) values (#{projectName},#{devAddress},#{prodAddress},#{description})
   </insert>
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.Project">
-    update project set project_name=#{projectName},dev_address=#{devAddress},prod_address=#{prodAddress},description=#{description},created_at=#{createdAt},created_by=#{createdBy},updated_at=#{updatedAt},updated_by=#{updatedBy}
+    update project set project_name=#{projectName},dev_address=#{devAddress},prod_address=#{prodAddress},description=#{description},created_by=#{createdBy},updated_by=#{updatedBy}
     where id=#{id}
   </update>
   <delete id="delete" parameterType="java.lang.Integer">

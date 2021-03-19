@@ -25,6 +25,8 @@ public class BaseConstans {
         DB_EXIT("DB001","数据库信息已经存在"),
         USER_NOT_EXIT("USER001","用户名或密码错误！"),
         USER_EXIT("USER002","用户已经存在！"),
+        USER_INFO_NOT_EXIT("USER003","用户信息不存在！"),
+        USER_TOKEN_INVALID("TOKEN001","token过期"),
         ;
 
 

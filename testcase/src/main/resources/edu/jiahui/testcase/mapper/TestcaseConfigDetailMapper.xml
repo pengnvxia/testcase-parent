@@ -7,8 +7,8 @@
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="value" property="value" jdbcType="VARCHAR" />
     <result column="config_id" property="configId" jdbcType="INTEGER" />
-    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
-    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
     <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -40,13 +40,13 @@
 
   <insert id="insertOne" parameterType="edu.jiahui.testcase.domain.TestcaseConfigDetail" useGeneratedKeys="true" keyProperty="id">
     insert into testcase_config_detail
-    (name,type,value,config_id)
-    values (#{name},#{type},#{value},#{configId})
+    (name,type,value,config_id,created_by,updated_by)
+    values (#{name},#{type},#{value},#{configId},#{createdBy},#{updatedBy})
   </insert>
 
   <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseConfigDetail">
     update testcase_config_detail
-    set name=#{name},type=#{type},value=#{value}
+    set name=#{name},type=#{type},value=#{value},updated_by=#{updatedBy}
     where id=#{id}
   </update>
 

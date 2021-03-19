@@ -7,8 +7,8 @@
         <result column="description" jdbcType="VARCHAR" property="description" />
         <result column="project_id" jdbcType="INTEGER" property="projectId" />
         <result column="env_id" jdbcType="INTEGER" property="envId" />
-        <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
-        <result column="updated_by" jdbcType="VARCHAR" property="updatedBy" />
+        <result column="created_by" jdbcType="INTEGER" property="createdBy" />
+        <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
         <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
         <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
     </resultMap>
@@ -28,14 +28,17 @@
         from testcase_config where id=#{id}
     </select>
 
-    <select id="selectByCondition" resultMap="BaseResultMap" parameterType="edu.jiahui.testcase.domain.request.SearchConfigReq">
+    <select id="selectByCondition" parameterType="edu.jiahui.testcase.domain.request.SearchConfigReq" resultType="edu.jiahui.testcase.domain.TestcaseConfig">
         select
-        testcase_config.id, testcase_config.config_name, testcase_config.project_id, testcase_config.env_id, testcase_config.description, testcase_config.created_by, testcase_config.updated_by, testcase_config.created_at,testcase_config.updated_at
+        testcase_config.id as id, testcase_config.config_name as configName, testcase_config.project_id as projectId, testcase_config.env_id as envId, testcase_config.description as description, users.username as updatedBy, testcase_config.created_at as createdAt,testcase_config.updated_at as updatedAt
         from testcase_config
         inner join
         project
         on
         testcase_config.project_id=project.id
+        left join users
+        on
+        testcase_config.updated_by=users.id
         <where>
         1=1
         <if test="configName != null and configName !=''">
@@ -69,11 +72,12 @@
 
     <insert id="insert" parameterType="edu.jiahui.testcase.domain.TestcaseConfig" useGeneratedKeys="true" keyProperty="id">
         insert into testcase_config
-        (config_name,project_id,env_id,description) values (#{configName},#{projectId},#{envId},#{description})
+        (config_name,project_id,env_id,description,created_by,updated_by) values (#{configName},#{projectId},#{envId},#{description},#{createdBy},#{updatedBy})
     </insert>
 
     <update id="update" parameterType="edu.jiahui.testcase.domain.TestcaseConfig">
-        update testcase_config set config_name=#{configName},project_id=#{projectId},env_id=#{envId},description=#{description}
+        update testcase_config set config_name=#{configName},project_id=#{projectId},env_id=#{envId},description=#{description},
+        created_by=#{createdBy},updated_by=#{updatedBy}
         where id=#{id}
     </update>
 

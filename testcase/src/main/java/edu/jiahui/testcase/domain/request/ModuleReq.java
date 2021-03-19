@@ -24,4 +24,7 @@ public class ModuleReq {
 
     private String description;
 
+    private Integer createdBy;
+
+    private Integer updatedBy;
 }

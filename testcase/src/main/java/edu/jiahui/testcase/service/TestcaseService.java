@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonArray;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.httpclient.HttpClientTemplate;
+import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.constants.DockerConstants;
 import edu.jiahui.testcase.constants.PythonConstants;
@@ -321,23 +322,27 @@ public class TestcaseService {
     }
 
     public void updateTestcase(Integer id,TestcaseReq req){
-        Testcase testcase= new Testcase();
-        testcase.setTestcaseName(req.getTestcaseName());
-        testcase.setEnvId(req.getEnvId());
-        testcase.setUrl(req.getPath());
-        testcase.setConfigIds(req.getConfigIds().toString());
-        testcase.setMethod(req.getMethod());
-        testcase.setId(id);
+        Testcase testcase= Testcase.builder()
+                .testcaseName(req.getTestcaseName())
+                .envId(req.getEnvId())
+                .url(req.getPath())
+                .configIds(req.getConfigIds().toString())
+                .method(req.getMethod())
+                .id(id)
+                .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                .build();
         testcaseMapper.updateByPrimaryKey(testcase);
         if(req.getVariables()!=null && req.getVariables().size()>0){
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Variable variable:req.getVariables()){
-                TestcaseDetail testcaseDetail= new TestcaseDetail();
-                testcaseDetail.setScope("variables");
-                testcaseDetail.setName(variable.getName());
-                testcaseDetail.setValue(variable.getValue());
-                testcaseDetail.setType(variable.getType());
-                testcaseDetail.setDatabaseId(variable.getDatabaseId());
+                TestcaseDetail testcaseDetail= TestcaseDetail.builder()
+                        .scope("variables")
+                        .name(variable.getName())
+                        .value(variable.getValue())
+                        .type(variable.getType())
+                        .databaseId(variable.getDatabaseId())
+                        .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                        .build();
                 if(variable.getId()!=null){
                     testcaseDetail.setId(variable.getId());
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -356,10 +361,12 @@ public class TestcaseService {
         if(req.getParameters()!=null && req.getParameters().size()>0){
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Parameter parameter:req.getParameters()){
-                TestcaseDetail testcaseDetail= new TestcaseDetail();
-                testcaseDetail.setScope("parameters");
-                testcaseDetail.setName(parameter.getKeyName());
-                testcaseDetail.setValue(parameter.getValue());
+                TestcaseDetail testcaseDetail= TestcaseDetail.builder()
+                        .scope("parameters")
+                        .name(parameter.getKeyName())
+                        .value(parameter.getValue())
+                        .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                        .build();
                 if(parameter.getId()!=null){
                     testcaseDetail.setId(parameter.getId());
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -378,10 +385,12 @@ public class TestcaseService {
         if(req.getSetuphooks()!=null && req.getSetuphooks().size()>0){
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Setuphook setuphook:req.getSetuphooks()){
-                TestcaseDetail testcaseDetail= new TestcaseDetail();
-                testcaseDetail.setScope("setupHooks");
-                testcaseDetail.setValue(setuphook.getSql());
-                testcaseDetail.setDatabaseId(setuphook.getDatabaseId());
+                TestcaseDetail testcaseDetail= TestcaseDetail.builder()
+                        .scope("setupHooks")
+                        .value(setuphook.getSql())
+                        .databaseId(setuphook.getDatabaseId())
+                        .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                        .build();
                 if(setuphook.getId()!=null){
                     testcaseDetail.setId(setuphook.getId());
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -400,10 +409,12 @@ public class TestcaseService {
         if(req.getReqHeaders()!=null && req.getReqHeaders().size()>0){
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.ReqHeader reqHeader:req.getReqHeaders()){
-                TestcaseDetail testcaseDetail= new TestcaseDetail();
-                testcaseDetail.setScope("reqHeaders");
-                testcaseDetail.setName(reqHeader.getKeyName());
-                testcaseDetail.setValue(reqHeader.getValue());
+                TestcaseDetail testcaseDetail= TestcaseDetail.builder()
+                        .scope("reqHeaders")
+                        .name(reqHeader.getKeyName())
+                        .value(reqHeader.getValue())
+                        .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                        .build();
                 if(reqHeader.getId()!=null){
                     testcaseDetail.setId(reqHeader.getId());
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -422,10 +433,12 @@ public class TestcaseService {
         if(req.getReqParams()!=null && req.getReqParams().size()>0){
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.ReqParam reqParam:req.getReqParams()){
-                TestcaseDetail testcaseDetail= new TestcaseDetail();
-                testcaseDetail.setScope("reqParams");
-                testcaseDetail.setName(reqParam.getKeyName());
-                testcaseDetail.setValue(reqParam.getValue());
+                TestcaseDetail testcaseDetail= TestcaseDetail.builder()
+                        .scope("reqParams")
+                        .name(reqParam.getKeyName())
+                        .value(reqParam.getValue())
+                        .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                        .build();
                 if(reqParam.getId()!=null){
                     testcaseDetail.setId(reqParam.getId());
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -444,10 +457,12 @@ public class TestcaseService {
         if(req.getExtracts()!=null && req.getExtracts().size()>0){
             List<Integer> ids = new ArrayList<>();
             for(TestcaseReq.Extract et : req.getExtracts()){
-                TestcaseDetail testcaseDetail= new TestcaseDetail();
-                testcaseDetail.setScope("extract");
-                testcaseDetail.setName(et.getName());
-                testcaseDetail.setValue(et.getResponseKey());
+                TestcaseDetail testcaseDetail= TestcaseDetail.builder()
+                        .scope("extract")
+                        .name(et.getName())
+                        .value(et.getResponseKey())
+                        .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                        .build();
                 if(et.getId()!=null){
                     testcaseDetail.setId(et.getId());
                     testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -489,9 +504,11 @@ public class TestcaseService {
         }
 
         if(req.getReqBody().size()>0){
-            TestcaseDetail testcaseDetail= new TestcaseDetail();
-            testcaseDetail.setValue(req.getReqBody().get("requestBody").toString());
-            testcaseDetail.setScope("requestBody");
+            TestcaseDetail testcaseDetail= TestcaseDetail.builder()
+                    .value(req.getReqBody().get("requestBody").toString())
+                    .scope("requestBody")
+                    .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                    .build();
             if(req.getReqBody().containsKey("id")){
                 testcaseDetail.setId(Integer.parseInt(req.getReqBody().get("id").toString()));
                 testcaseDetailMapper.updateByPrimaryKey(testcaseDetail);
@@ -514,7 +531,9 @@ public class TestcaseService {
                     .expectedValue(responseItem.getExpectedValue())
                     .scope("response")
                     .testcaseId(testcaseId)
-                    .parentId(parentId).build();
+                    .parentId(parentId)
+                    .updatedBy(Integer.parseInt(ParameterThreadLocal.getUid()))
+                    .build();
 //            if(flag){
 //                testcaseDetail.setArrayIndex(i);
 //            }

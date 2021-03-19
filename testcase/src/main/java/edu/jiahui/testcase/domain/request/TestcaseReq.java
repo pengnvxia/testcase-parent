@@ -41,7 +41,6 @@ public class TestcaseReq {
 
     private List<Extract> extracts;
 
-
     @Data
     public static class Variable {
 

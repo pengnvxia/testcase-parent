@@ -65,4 +65,9 @@ public class UserService {
         Users user=Users.builder().id(userId).token(null).build();
         usersMapper.updateToken(user);
     }
+
+    public Users authentication(Users users){
+        Users selUser=usersMapper.selectByToken(users);
+        return selUser;
+    }
 }

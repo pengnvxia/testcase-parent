@@ -33,7 +33,7 @@ public class SearchConfigRes {
 
         private String projectName;
 
-        private String updateBy;
+        private String updatedBy;
 
         private Date updatedAt;
 

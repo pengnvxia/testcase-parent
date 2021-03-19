@@ -38,16 +38,19 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectById" parameterType="java.lang.Integer" resultType="edu.jiahui.testcase.domain.Interfaces">
-    select id,name,url,updatedBy,updatedAt from interfaces where
+    select interfaces.id as id,interfaces.name as name,interfaces.url as url,users.username as updatedBy,interfaces.updatedAt as updatedAt
+    from interfaces
+    left join users
+    on interfaces.updatedBy=users.id
+    where
     env_id=#{envId} and repositoryId=#{repositoryId} and moduleId=#{moduleId}
   </select>
-  <insert id="insert">
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Interfaces">
     insert into interfaces
-    (name,url,method,description,repositoryId,moduleId,env_id)
-    values (#{name},#{url},#{method},#{description},#{repositoryId},#{moduleId},#{envId})
+    (name,url,method,description,repositoryId,moduleId,env_id,createdBy,updatedBy)
+    values (#{name},#{url},#{method},#{description},#{repositoryId},#{moduleId},#{envId},#{createdBy},#{updatedBy})
   </insert>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from interfaces where id=#{id}
   </delete>
-
 </mapper>

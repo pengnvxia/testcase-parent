@@ -1,6 +1,7 @@
 package edu.jiahui.testcase.service;
 
 import com.alibaba.fastjson.JSONObject;
+import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
 import edu.jiahui.testcase.domain.Interfaces;
 import edu.jiahui.testcase.domain.Properties;
 import edu.jiahui.testcase.domain.request.AddInterfaceInfoReq;
@@ -67,14 +68,17 @@ public class PropertiesService {
     }
 
     public void addInterfaceInfo(AddInterfaceInfoReq req){
-        Interfaces interfaces= new Interfaces();
-        interfaces.setName(req.getInterfaceName());
-        interfaces.setUrl(req.getInterfaceAddress());
-        interfaces.setMethod(req.getInterfaceMethod());
-        interfaces.setDescription(req.getDescription());
-        interfaces.setRepositoryId(req.getProjectId());
-        interfaces.setModuleId(req.getModuleId());
-        interfaces.setEnvId(req.getEnvId());
+        Interfaces interfaces= Interfaces.builder()
+                .name(req.getInterfaceName())
+                .url(req.getInterfaceAddress())
+                .method(req.getInterfaceMethod())
+                .description(req.getDescription())
+                .repositoryId(req.getProjectId())
+                .moduleId(req.getModuleId())
+                .envId(req.getEnvId())
+                .createdBy(ParameterThreadLocal.getUid())
+                .updatedBy(ParameterThreadLocal.getUid())
+                .build();
         interfacesMapper.insert(interfaces);
 //        Interfaces interfaces=Interfaces.builder().name(req.getInterfaceName()).
 //                url(req.getInterfaceAddress()).method(req.getInterfaceMethod()).

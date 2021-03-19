@@ -38,4 +38,8 @@ public class DatabaseReq {
     private String createTableSql;
 
     private String insertSql;
+
+    private String createdBy;
+
+    private String updatedBy;
 }

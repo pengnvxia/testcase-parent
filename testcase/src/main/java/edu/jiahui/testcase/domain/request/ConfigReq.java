@@ -23,6 +23,9 @@ public class ConfigReq {
 
     private List<Variables> variablesList;
 
+    private Integer createdBy;
+
+    private Integer updatedBy;
 
     @Data
     public static class Variables{

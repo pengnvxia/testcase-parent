@@ -9,8 +9,8 @@
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="env_id" property="envId" jdbcType="INTEGER" />
-    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
-    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
     <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -22,10 +22,14 @@
     id, db_name, host, port, username, password, env_id, created_by, updated_by, created_at,updated_at,create_table_sql,insert_sql
   </sql>
 
-  <select id="select" resultMap="ResultMapWithBLOBs" parameterType="edu.jiahui.testcase.domain.request.SearchDatabaseReq">
-    select id,db_name,host,port,username,env_id,updated_by,updated_at
+  <select id="select" parameterType="edu.jiahui.testcase.domain.request.SearchDatabaseReq" resultType="edu.jiahui.testcase.domain.DatabaseWithBLOBs">
+    select db.id as id,db.db_name as dbName,db.host as host,db.port as port,db.username as username,db.env_id as envId,users.username as updatedBy,db.updated_at as updatedAt
     from
     db
+    left join
+    users
+    on
+    db.updated_by=users.id
     <where>
       1=1
       <if test="envId !=null and envId != ''">
@@ -35,7 +39,7 @@
         and db_name like '%${dbName}%'
       </if>
     </where>
-    order by updated_at desc
+    order by db.updated_at desc
   </select>
 
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
@@ -71,16 +75,16 @@
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.request.DatabaseReq">
     insert into db
-    (db_name,host,port,username,password,env_id,create_table_sql,insert_sql)
+    (db_name,host,port,username,password,env_id,create_table_sql,insert_sql,created_by,updated_by)
     values
-    (#{dbName},#{host},#{port},#{username},#{password},#{envId},#{createTableSql},#{insertSql})
+    (#{dbName},#{host},#{port},#{username},#{password},#{envId},#{createTableSql},#{insertSql},#{createdBy},#{updatedBy})
   </insert>
 
   <update id="update" parameterType="edu.jiahui.testcase.domain.request.DatabaseReq">
     update db
     set
     db_name=#{dbName},host=#{host},port=#{port},username=#{username},password=#{password},
-    env_id=#{envId},create_table_sql=#{createTableSql},insert_sql=#{insertSql}
+    env_id=#{envId},create_table_sql=#{createTableSql},insert_sql=#{insertSql},updated_by=#{updatedBy}
     where id=#{id}
   </update>
 

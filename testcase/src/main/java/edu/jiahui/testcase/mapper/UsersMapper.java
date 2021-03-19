@@ -9,4 +9,5 @@ public interface UsersMapper {
     UserRes selectByNameAndPassword(Users users);
     void updateToken(Users users);
     Integer selectByName(Users users);
+    Users selectByToken(Users users);
 }

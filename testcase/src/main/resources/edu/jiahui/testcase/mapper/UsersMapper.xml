@@ -10,8 +10,8 @@
     <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP" />
     <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
-    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
-    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, username, password, token, email, deleted_at, created_at, updated_at, created_by, updated_by
@@ -23,6 +23,12 @@
 
   <select id="selectByNameAndPassword" parameterType="edu.jiahui.testcase.domain.Users" resultType="edu.jiahui.testcase.domain.response.UserRes">
     select id as userId,username from users where username=#{username} and password=#{password} limit 1
+  </select>
+
+  <select id="selectByToken" parameterType="edu.jiahui.testcase.domain.Users" resultType="edu.jiahui.testcase.domain.Users">
+    select id,token from users
+    where token=#{token}
+    limit 1
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Users">

@@ -3,6 +3,7 @@ package edu.jiahui.testcase.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.jiahui.framework.exceptions.ClientException;
+import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
 import edu.jiahui.testcase.constants.BaseConstans;
 import edu.jiahui.testcase.domain.TestcaseConfig;
 import edu.jiahui.testcase.domain.TestcaseConfigDetail;
@@ -62,7 +63,7 @@ public class ConfigService {
                     .configName(tc.getConfigName())
                     .projectId(tc.getProjectId())
                     .projectName(projectMapper.selectByPrimaryKey(tc.getProjectId()).getProjectName())
-                    .updateBy(tc.getUpdatedBy())
+                    .updatedBy(tc.getUpdatedBy())
                     .updatedAt(tc.getUpdatedAt())
                     .description(tc.getDescription())
                     .envId(tc.getEnvId())
@@ -95,6 +96,8 @@ public class ConfigService {
                 .projectId(req.getProjectId())
                 .envId(req.getEnvId())
                 .description(req.getDescription())
+                .createdBy(ParameterThreadLocal.getUid())
+                .updatedBy(ParameterThreadLocal.getUid())
                 .build();
         testcaseConfigMapper.insert(testcaseConfig);
         List<ConfigReq.Variables> variablesList=req.getVariablesList();
@@ -104,7 +107,9 @@ public class ConfigService {
                     .name(vr.getName())
                     .type(vr.getType())
                     .value(vr.getValue())
-                    .configId(testcaseConfig.getId()).build();
+                    .configId(testcaseConfig.getId())
+                    .updatedBy(ParameterThreadLocal.getUid())
+                    .build();
             testcaseConfigDetailList.add(testcaseConfigDetail);
         }
         testcaseConfigDetailMapper.insert(testcaseConfigDetailList);
@@ -119,6 +124,7 @@ public class ConfigService {
                 .configName(req.getConfigName())
                 .projectId(req.getProjectId())
                 .envId(req.getEnvId())
+                .updatedBy(ParameterThreadLocal.getUid())
                 .id(id)
                 .description(req.getDescription()).build();
         //更新config中内容
@@ -132,6 +138,7 @@ public class ConfigService {
                     .id(vr.getVariableId())
                     .configId(id)
                     .id(vr.getVariableId())
+                    .updatedBy(ParameterThreadLocal.getUid())
                     .build();
             //新增或者更新config_detail中的内容
             if(testcaseConfigDetail.getId()==null){
