@@ -6,6 +6,7 @@ import edu.jiahui.testcase.domain.Interfaces;
 import edu.jiahui.testcase.domain.Properties;
 import edu.jiahui.testcase.domain.request.AddInterfaceInfoReq;
 import edu.jiahui.testcase.domain.request.TestcaseReq;
+import edu.jiahui.testcase.domain.response.AddInterfaceRes;
 import edu.jiahui.testcase.domain.response.InterfaceRes;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.mapper.InterfacesMapper;
@@ -67,7 +68,7 @@ public class PropertiesService {
         return testcaseRes;
     }
 
-    public void addInterfaceInfo(AddInterfaceInfoReq req){
+    public AddInterfaceRes addInterfaceInfo(AddInterfaceInfoReq req){
         Interfaces interfaces= Interfaces.builder()
                 .name(req.getInterfaceName())
                 .url(req.getInterfaceAddress())
@@ -80,6 +81,8 @@ public class PropertiesService {
                 .updatedBy(ParameterThreadLocal.getUid())
                 .build();
         interfacesMapper.insert(interfaces);
+        AddInterfaceRes res= AddInterfaceRes.builder().interfaceId(interfaces.getId()).build();
+        return res;
 //        Interfaces interfaces=Interfaces.builder().name(req.getInterfaceName()).
 //                url(req.getInterfaceAddress()).method(req.getInterfaceMethod()).
 //                description(req.getDescription()).repositoryId(req.getProjectId()).moduleId(req.getModuleId()).build();

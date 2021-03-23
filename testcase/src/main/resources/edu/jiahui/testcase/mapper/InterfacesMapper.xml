@@ -44,8 +44,9 @@
     on interfaces.updatedBy=users.id
     where
     env_id=#{envId} and repositoryId=#{repositoryId} and moduleId=#{moduleId}
+    order by interfaces.updatedAt desc
   </select>
-  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Interfaces">
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Interfaces" useGeneratedKeys="true" keyProperty="id">
     insert into interfaces
     (name,url,method,description,repositoryId,moduleId,env_id,createdBy,updatedBy)
     values (#{name},#{url},#{method},#{description},#{repositoryId},#{moduleId},#{envId},#{createdBy},#{updatedBy})

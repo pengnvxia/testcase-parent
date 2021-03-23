@@ -324,7 +324,7 @@ public class GroupService {
 
 
 //        JSONObject variablesJson= new JSONObject();
-        JSONObject configParametersJson= new JSONObject();
+        List configParametersList= new ArrayList();
 
         if(testcaseGroupDetails.size()>0){
             for(TestcaseGroupDetail tgd: testcaseGroupDetails){
@@ -373,7 +373,10 @@ public class GroupService {
                 }
 
                 if(tgd.getScope().equals("parameters")){
-                    configParametersJson.put(tgd.getName(),tgd.getValue());
+                    JSONObject item=new JSONObject();
+                    item.put(tgd.getName(),JSON.parseArray(tgd.getValue(),String.class));
+                    configParametersList.add(item);
+//                    configParametersJson.put(tgd.getName(),tgd.getValue());
                 }
             }
         }
@@ -391,7 +394,7 @@ public class GroupService {
         configJson.put("id",testcaseGroup.getGroupName());
         configJson.put("name",testcaseGroup.getGroupName());
         configJson.put("variables",totalVariableJson);
-        configJson.put("parameters",configParametersJson);
+        configJson.put("parameters",configParametersList);
 
         JSONObject testcaseConfigJson= new JSONObject();
         testcaseConfigJson.put("config",configJson);

@@ -85,7 +85,7 @@ public class CaseService {
         JSONObject reqParamsJson= new JSONObject();
         JSONObject requestBodyJson= new JSONObject();
         JSONArray requestBodyJsonArray= new JSONArray();
-        JSONObject configParametersJson= new JSONObject();
+        List configParametersList= new ArrayList();
         List extractList= new ArrayList();
         List validateList = new ArrayList();
         if(testcaseDetailList.size()<=0){
@@ -111,9 +111,11 @@ public class CaseService {
 
                 if(testcaseDetail.getScope().equals("parameters")){
                     //设置多个用例
+                    JSONObject item= new JSONObject();
+                    item.put(testcaseDetail.getName(),JSON.parseArray(testcaseDetail.getValue(),String.class));
+                    configParametersList.add(item);
 
-//                    configParametersJson.put(testcaseDetail.getName(),JSON.parseArray(testcaseDetail.getValue(),String.class));
-                    configParametersJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
+//                    configParametersJson.put(testcaseDetail.getName(),testcaseDetail.getValue());
                 }
 
                 if(testcaseDetail.getScope().equals("variables")){
@@ -226,7 +228,7 @@ public class CaseService {
 //        JSONObject baseUrlJson = new JSONObject();
 //        baseUrlJson.put("base_url",baseUrl);
 //        configJson.put("request",baseUrlJson);
-        configJson.put("parameters",configParametersJson);
+        configJson.put("parameters",configParametersList);
 
         JSONObject requestJson = new JSONObject();
         requestJson.put("headers",reqHeadersJson);

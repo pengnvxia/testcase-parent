@@ -3,6 +3,7 @@ package edu.jiahui.testcase.controller;
 import edu.jiahui.framework.util.ResultCode;
 import edu.jiahui.testcase.domain.Testcase;
 import edu.jiahui.testcase.domain.request.*;
+import edu.jiahui.testcase.domain.response.AddInterfaceRes;
 import edu.jiahui.testcase.domain.response.TestcaseRes;
 import edu.jiahui.testcase.service.PropertiesService;
 import edu.jiahui.testcase.service.TestcaseService;
@@ -126,12 +127,13 @@ public class TestcaseController {
 
     @RequestMapping(method = RequestMethod.POST,value = "/addInterface")
     public ResultCode addInterface(@RequestBody @Valid AddInterfaceInfoReq req){
+        AddInterfaceRes res=null;
         try {
-            propertiesService.addInterfaceInfo(req);
+            res = propertiesService.addInterfaceInfo(req);
         }catch (Exception e){
             return ResultCode.getFailure(null,e.getMessage());
         }
-        return ResultCode.getSuccessReturn(null,null,"添加成功！");
+        return ResultCode.getSuccessReturn(null,null,res);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/case/list")

@@ -21,6 +21,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
             ,"/cmp_sp/**"
             ,"/report/week/**"
             ,"/user/login"
+            ,"/user/register"
     };
 
     @Bean
