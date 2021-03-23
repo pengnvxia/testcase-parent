@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>edu.jiahui</groupId>
                 <artifactId>framework-starter</artifactId>
-                <version>${project.release.version}</version>
+                <version>1.0.1.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>edu.jiahui</groupId>
@@ -48,7 +48,7 @@
             <dependency>
                 <groupId>edu.jiahui</groupId>
                 <artifactId>feign-starter</artifactId>
-                <version>${project.release.version}</version>
+                <version>1.0.1.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>edu.jiahui</groupId>
@@ -58,7 +58,12 @@
             <dependency>
                 <groupId>edu.jiahui</groupId>
                 <artifactId>consul-starter</artifactId>
-                <version>${project.release.version}</version>
+                <version>1.0.1.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ecwid.consul</groupId>
+                <artifactId>consul-api</artifactId>
+                <version>1.4.2</version>
             </dependency>
             <!--<dependency>-->
             <!--    <groupId>edu.jiahui</groupId>-->
