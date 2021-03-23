@@ -1,6 +1,6 @@
 package edu.jiahui.testcase.controller;
 
-import edu.jiahui.testcase.common.bo.Demo;
+
 import org.springframework.web.bind.annotation.*;
 
 /**

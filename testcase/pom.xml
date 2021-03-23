@@ -46,10 +46,10 @@
             <groupId>edu.jiahui</groupId>
             <artifactId>consul-starter</artifactId>
         </dependency>
-        <!--<dependency>-->
-        <!--    <groupId>edu.jiahui</groupId>-->
-        <!--    <artifactId>testcase-common</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+         <groupId>edu.jiahui</groupId>
+          <artifactId>testcase-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.ecwid.consul</groupId>
             <artifactId>consul-api</artifactId>
