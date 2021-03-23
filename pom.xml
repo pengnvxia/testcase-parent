@@ -78,7 +78,11 @@
 <!--                <groupId>com.github.docker-java</groupId>-->
 <!--                <artifactId>docker-java-transport-httpclient5</artifactId>-->
 <!--            </dependency>-->
-
+            <dependency>
+                <groupId>edu.jiahui</groupId>
+                <artifactId>testcase-common</artifactId>
+                <version>${project.release.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
