@@ -19,7 +19,7 @@
 
     <modules>
         <module>testcase-common</module>
-        <module>testcase-rpc</module>
+        <!--<module>testcase-rpc</module>-->
         <module>testcase</module>
     </modules>
 
