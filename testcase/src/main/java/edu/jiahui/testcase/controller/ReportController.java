@@ -20,6 +20,7 @@ public class ReportController {
 
     @Autowired
     private ReportService reportService;
+
     @RequestMapping(method = RequestMethod.GET,value = "/list/{id}")
     // @RequestParam("group") Integer group
     public ResultCode list(@PathVariable("id")Integer id){
