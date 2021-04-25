@@ -5,10 +5,6 @@ import sys
 import ast
 
 
-# testcase_list = [{"config":{"request":{"base_url":"http://172.19.21.228:58080"},"variables":{},"name":"test002","id":"test002","parameters":{}}},{"test":{"request":{"headers":{},"json":{},"params":{}},"variables":{},"name":"test002","validate":[{"eq":["content.name001",3]}]}}]
-# project = 'paper'
-# path = 'test002'
-
 
 def create_yaml(project, path, testcase_list):
 	root_path = './yaml'
