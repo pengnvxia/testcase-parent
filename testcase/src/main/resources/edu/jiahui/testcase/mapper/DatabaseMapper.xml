@@ -73,6 +73,12 @@
     where db_name=#{dbName} and env_id=#{envId} and id &lt;&gt; #{id}
   </select>
 
+  <select id="selectMini" resultType="edu.jiahui.testcase.domain.Database">
+    select id, db_name as dbName
+    from db
+    order by id desc
+  </select>
+
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.request.DatabaseReq">
     insert into db
     (db_name,host,port,username,password,env_id,create_table_sql,insert_sql,created_by,updated_by)

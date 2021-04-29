@@ -22,13 +22,12 @@
   </select>
 
   <select id="selectByNameAndPassword" parameterType="edu.jiahui.testcase.domain.Users" resultType="edu.jiahui.testcase.domain.response.UserRes">
-    select id as userId,username from users where username=#{username} and password=#{password} limit 1
+    select id as userId,username from users where username=#{username} and password=#{password}
   </select>
 
   <select id="selectByToken" parameterType="edu.jiahui.testcase.domain.Users" resultType="edu.jiahui.testcase.domain.Users">
     select id,token from users
     where token=#{token}
-    limit 1
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Users">

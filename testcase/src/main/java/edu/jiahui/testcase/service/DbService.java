@@ -93,4 +93,9 @@ public class DbService {
         databaseMapper.delete(id);
     }
 
+    public List<Database> dbMini(){
+        List<Database> dbMini= databaseMapper.selectMini();
+        return dbMini;
+    }
+
 }

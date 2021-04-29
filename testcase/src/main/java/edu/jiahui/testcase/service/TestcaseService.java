@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonArray;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.httpclient.HttpClientTemplate;
 import edu.jiahui.framework.threadlocal.ParameterThreadLocal;
@@ -63,6 +64,9 @@ public class TestcaseService {
     private TestcaseDbMapper testcaseDbMapper;
 
     @Resource
+    private ReportDetailMapper reportDetailMapper;
+
+    @Resource
     private HttpClientTemplate httpClientTemplate;
 
     @Autowired
@@ -77,6 +81,8 @@ public class TestcaseService {
         testcase.setInterfaceId(id);
         testcase.setUrl(req.getPath());
         testcase.setMethod(req.getMethod());
+        testcase.setCreatedBy(Integer.parseInt(ParameterThreadLocal.getUid()));
+        testcase.setUpdatedBy(Integer.parseInt(ParameterThreadLocal.getUid()));
         testcaseMapper.insert(testcase);
         Integer testcaseId = testcase.getId();
         List<TestcaseDetail> testcaseDetailList = new ArrayList<>();
@@ -574,7 +580,7 @@ public class TestcaseService {
         return lista;
     }
 
-
+//
     public void runTestcase(Integer envId,Integer projectId,Integer testcaseId,Boolean flag){
         Project project = projectMapper.selectByPrimaryKey(projectId);
         Testcase testcase = testcaseMapper.selectByPrimaryKey(testcaseId);
@@ -583,11 +589,53 @@ public class TestcaseService {
         caseService.createTestcaseYaml(project.getProjectName(),testcase.getTestcaseName(),testcaseList);
         //执行测试用例
         String reportContent = caseService.execTestcase(project.getProjectName(),testcase.getTestcaseName());
-        Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
-        Integer result = status ? 1 : 0;
-        Report report = Report.builder().testcaseId(testcaseId).content(reportContent).result(result).isGroup(0).build();
+        JSONObject reportContentJson= JSON.parseObject(JSON.parseArray(reportContent).getString(0));
+        Report report= Report.builder().testcaseId(testcaseId).
+                result(reportContentJson.getBoolean("success") ? 1 : 0)
+                .createdBy(ParameterThreadLocal.getUid())
+                .updatedBy(ParameterThreadLocal.getUid())
+                .build();
+        //Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
+        //Integer result = status ? 1 : 0;
+//        Report report = Report.builder().testcaseId(testcaseId).content(reportContent).result(result).build();
         //报告数据落表
         reportMapper.insert(report);
+        //只有一个用例取一个
+//        JSONObject recordsJson= JSON.parseObject(JSON.parseArray(reportContentJson.getString("records")).getString(0));
+//        ReportDetail reportDetail= ReportDetail.builder()
+//                .reportId(report.getId())
+//                .result(recordsJson.getString("status"))
+//                .url(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("url"))
+//                .method(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("method"))
+//                .statusCode(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("response")).getString("status_code"))
+//                .requestHeaders(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("headers"))
+//                .requestBody(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("json"))
+//                .validators(JSON.parseObject(recordsJson.getString("meta_data")).getString("validators"))
+//                .response(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("response")).getString("content"))
+//                .createdBy(ParameterThreadLocal.getUid())
+//                .updatedBy(ParameterThreadLocal.getUid())
+//                .build();
+//        reportDetailMapper.insert(reportDetail);
+
+        JSONArray recordsArray= JSON.parseArray(reportContentJson.getString("records"));
+        for(int i=0;i<recordsArray.size();i++){
+            JSONObject recordsJson= JSON.parseObject(recordsArray.getString(i));
+            ReportDetail reportDetail= ReportDetail.builder()
+                    .reportId(report.getId())
+                    .result(recordsJson.getString("status"))
+                    .url(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("url"))
+                    .method(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("method"))
+                    .statusCode(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("response")).getString("status_code"))
+                    .requestHeaders(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("headers"))
+                    .requestBody(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("json"))
+                    .validators(JSON.parseObject(recordsJson.getString("meta_data")).getString("validators"))
+                    .response(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("response")).getString("content"))
+                    .attachment(recordsJson.getString("attachment"))
+                    .createdBy(ParameterThreadLocal.getUid())
+                    .updatedBy(ParameterThreadLocal.getUid())
+                    .build();
+            reportDetailMapper.insert(reportDetail);
+        }
         //return testcaseList;
         //删除镜像 先注掉，数据库方案还未确定
 //        if(flag){

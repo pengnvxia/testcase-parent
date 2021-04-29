@@ -27,11 +27,10 @@ public class Report {
 
     private Date updatedAt;
 
-    private String content;
-
     private Integer result;
 
-    private String reportLink;
+    private Integer successNum;
 
-    private Integer isGroup;
+    private Integer failNum;
+
 }

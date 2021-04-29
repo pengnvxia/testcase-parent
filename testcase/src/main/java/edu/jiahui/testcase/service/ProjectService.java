@@ -103,7 +103,6 @@ public class ProjectService {
         project.setDevAddress(req.getDevAddress());
         project.setProdAddress(req.getProdAddress());
         project.setDescription(req.getDescription());
-        project.setCreatedBy(Integer.parseInt(ParameterThreadLocal.getUid()));
         project.setUpdatedBy(Integer.parseInt(ParameterThreadLocal.getUid()));
         projectMapper.updateByPrimaryKey(project);
     }

@@ -4,7 +4,9 @@ package edu.jiahui.testcase.service;
 import com.alibaba.fastjson.JSON;
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.testcase.domain.Report;
+import edu.jiahui.testcase.domain.ReportDetail;
 import edu.jiahui.testcase.domain.response.ReportRes;
+import edu.jiahui.testcase.mapper.ReportDetailMapper;
 import edu.jiahui.testcase.mapper.ReportMapper;
 import org.springframework.stereotype.Service;
 import edu.jiahui.testcase.constants.BaseConstans;
@@ -20,7 +22,11 @@ public class ReportService {
     @Resource
     private ReportMapper reportMapper;
 
+    @Resource
+    private ReportDetailMapper reportDetailMapper;
+
     public List<ReportRes.Report> reportList(Integer id){
+
 
         List<Report> reportList = reportMapper.selectByTestcaseId(id);
         List<ReportRes.Report> res= new ArrayList<>();
@@ -30,8 +36,6 @@ public class ReportService {
                     .createdAt(rp.getCreatedAt())
                     .createdBy(rp.getCreatedBy())
                     .result(rp.getResult())
-                    .reportLink(rp.getReportLink())
-                    .reportHtml(JSON.parseObject(rp.getContent()).get("reports").toString())
                     .build();
             res.add(report);
         }
@@ -47,11 +51,13 @@ public class ReportService {
                     .createdAt(rp.getCreatedAt())
                     .createdBy(rp.getCreatedBy())
                     .result(rp.getResult())
-                    .reportLink(rp.getReportLink())
-                    .reportHtml(JSON.parseObject(rp.getContent()).get("reports").toString())
                     .build();
             res.add(report);
         }
         return res;
+    }
+
+    public List<ReportDetail> reportDetailList(Integer id){
+        return reportDetailMapper.selectByReportId(id);
     }
 }

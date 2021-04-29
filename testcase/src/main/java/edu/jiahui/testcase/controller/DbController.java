@@ -2,6 +2,7 @@ package edu.jiahui.testcase.controller;
 
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.util.ResultCode;
+import edu.jiahui.testcase.domain.Database;
 import edu.jiahui.testcase.domain.request.DatabaseReq;
 import edu.jiahui.testcase.domain.request.SearchDatabaseReq;
 import edu.jiahui.testcase.domain.response.DatabaseRes;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -82,5 +84,17 @@ public class DbController {
             return ResultCode.getFailure(null,"服务器繁忙，轻稍后重试！");
         }
         return ResultCode.getSuccessReturn(null,"删除成功！",null);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/list/mini")
+    public ResultCode dbMini(){
+        List<Database> res= new ArrayList<>();
+        try{
+            res= dbService.dbMini();
+        }catch (Exception e){
+            log.error("删除数据库信息异常:{}",e.getMessage());
+            return ResultCode.getFailure(null,"服务器繁忙，轻稍后重试！");
+        }
+        return ResultCode.getSuccessReturn(null,null,res);
     }
 }

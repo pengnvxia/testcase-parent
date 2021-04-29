@@ -2,6 +2,7 @@ package edu.jiahui.testcase.service;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -48,6 +49,9 @@ public class GroupService {
 
     @Resource
     private ReportMapper reportMapper;
+
+    @Resource
+    private ReportDetailMapper reportDetailMapper;
 
     @Resource
     private TestcaseConfigMapper testcaseConfigMapper;
@@ -407,13 +411,40 @@ public class GroupService {
         //创建可执行的yaml文件
         caseService.createTestcaseYaml(project.getProjectName(),testcaseGroup.getGroupName(),testcaseGroupList);
         //执行测试用例
+
         String reportContent = caseService.execTestcase(project.getProjectName(),testcaseGroup.getGroupName());
-        Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
-        Integer result = status ? 1 : 0;
-        Report report = Report.builder().groupId(id).content(reportContent).result(result).isGroup(1).build();
+        JSONObject reportContentJson= JSON.parseObject(JSON.parseArray(reportContent).getString(0));
+
+//        Boolean status = (Boolean) JSON.parseObject(reportContent).get("status");
+//        Integer result = status ? 1 : 0;
+        //修改存储数据
+        Report report= Report.builder().groupId(id).
+                result(reportContentJson.getBoolean("success") ? 1 : 0)
+                .createdBy(ParameterThreadLocal.getUid())
+                .updatedBy(ParameterThreadLocal.getUid())
+                .build();
+//        Report report = Report.builder().groupId(id).result(result).build();
         //报告数据落表
         reportMapper.insert(report);
-
+        JSONArray recordsArray= JSON.parseArray(reportContentJson.getString("records"));
+        for(int i=0;i<recordsArray.size();i++){
+            JSONObject recordsJson= JSON.parseObject(recordsArray.getString(i));
+            ReportDetail reportDetail= ReportDetail.builder()
+                    .reportId(report.getId())
+                    .result(recordsJson.getString("status"))
+                    .url(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("url"))
+                    .method(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("method"))
+                    .statusCode(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("response")).getString("status_code"))
+                    .requestHeaders(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("headers"))
+                    .requestBody(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("request")).getString("json"))
+                    .validators(JSON.parseObject(recordsJson.getString("meta_data")).getString("validators"))
+                    .response(JSON.parseObject(JSON.parseObject(recordsJson.getString("meta_data")).getString("response")).getString("content"))
+                    .attachment(recordsJson.getString("attachment"))
+                    .createdBy(ParameterThreadLocal.getUid())
+                    .updatedBy(ParameterThreadLocal.getUid())
+                    .build();
+            reportDetailMapper.insert(reportDetail);
+        }
     }
 
 

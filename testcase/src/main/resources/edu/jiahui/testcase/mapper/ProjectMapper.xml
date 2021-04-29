@@ -24,12 +24,13 @@
   </select>
 
   <select id="selectAll" resultType="edu.jiahui.testcase.domain.Project" >
-    select p.id,p.project_name as projectName,p.dev_address as devAddress,p.prod_address as prodAddress,p.description,p.created_at as createdAt,p.updated_at as updatedAt,u1.username as createdName,u2.username as updatedName
-    from project p ,users u1,users u2 where
-    p.created_by =u1.id
-    and
-    p.updated_by=u2.id
-     order by p.project_name asc
+    select p.id ,p.project_name as projectName,p.dev_address as devAddress,
+    p.prod_address as prodAddress,p.description,p.created_at as createdAt,
+    p.updated_at as updatedAt,u1.username as updatedName
+    from project p
+    left join users u1
+    on p.updated_by=u1.id
+    order by p.project_name asc
   </select>
   <select id="projectNameExit" resultType="java.lang.Integer">
     select count(1) from project
@@ -45,10 +46,10 @@
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Project">
     insert into project
-    (project_name,dev_address,prod_address,description) values (#{projectName},#{devAddress},#{prodAddress},#{description})
+    (project_name,dev_address,prod_address,description,created_by,updated_by) values (#{projectName},#{devAddress},#{prodAddress},#{description},#{createdBy},#{updatedBy})
   </insert>
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.Project">
-    update project set project_name=#{projectName},dev_address=#{devAddress},prod_address=#{prodAddress},description=#{description},created_by=#{createdBy},updated_by=#{updatedBy}
+    update project set project_name=#{projectName},dev_address=#{devAddress},prod_address=#{prodAddress},description=#{description},updated_by=#{updatedBy}
     where id=#{id}
   </update>
   <delete id="delete" parameterType="java.lang.Integer">

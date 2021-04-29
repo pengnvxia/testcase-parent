@@ -10,45 +10,50 @@
     <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
     <result column="result" property="result" jdbcType="INTEGER" />
-    <result column="report_link" property="reportLink" jdbcType="VARCHAR" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="edu.jiahui.testcase.domain.Report" extends="BaseResultMap" >
-    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <result column="success_num" property="successNum" jdbcType="INTEGER" />
+    <result column="fail_num" property="successNum" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, testcase_id, group_id, created_by, updated_by, created_at, updated_at, result, report_link
+    id, testcase_id, group_id, created_by, updated_by, created_at, updated_at, result, success_num,fail_num
   </sql>
-  <sql id="Blob_Column_List" >
-    content
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from report
     where id = #{id,jdbcType=INTEGER}
   </select>
 
-  <select id="selectByTestcaseId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+  <select id="selectByTestcaseId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select
-    <include refid="Base_Column_List" />,
-    <include refid="Blob_Column_List"/>
+    report.id as id,
+    report.result as result,
+    report.created_at as created_at,
+    users.username as created_by
     from report
+    left join
+    users
+    on
+    report.created_by=users.id
     where testcase_id = #{id,jdbcType=INTEGER}
-    order by created_at desc
+    order by report.created_at desc
   </select>
 
-  <select id="selectByGroupId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+  <select id="selectByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select
-    <include refid="Base_Column_List" />,
-    <include refid="Blob_Column_List"/>
+    report.id as id,
+    report.result as result,
+    report.created_at as created_at,
+    users.username as created_by
     from report
+    left join
+    users
+    on
+    report.created_by=users.id
     where group_id = #{id,jdbcType=INTEGER}
-    order by created_at desc
+    order by report.created_at desc
   </select>
 
-  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Report">
-    insert into report (testcase_id,group_id,content,result) values (#{testcaseId},#{groupId},#{content},#{result})
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.Report" useGeneratedKeys="true" keyProperty="id">
+    insert into report (testcase_id,group_id,result,success_num,fail_num,created_by,updated_by) values (#{testcaseId},#{groupId},#{result},#{successNum},#{failNum},#{createdBy},#{updatedBy})
   </insert>
 </mapper>

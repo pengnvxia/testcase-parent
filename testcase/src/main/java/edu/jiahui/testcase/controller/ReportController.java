@@ -2,6 +2,7 @@ package edu.jiahui.testcase.controller;
 
 import edu.jiahui.framework.exceptions.ClientException;
 import edu.jiahui.framework.util.ResultCode;
+import edu.jiahui.testcase.domain.ReportDetail;
 import edu.jiahui.testcase.domain.response.ReportRes;
 import edu.jiahui.testcase.service.ReportService;
 import feign.QueryMap;
@@ -41,6 +42,18 @@ public class ReportController {
             res=reportService.groupReportList(id);
         }catch (Exception e){
             log.error("查询报告列表异常:{}",e.getMessage());
+            return ResultCode.getFailure(null,e.getMessage());
+        }
+        return ResultCode.getSuccessReturn(null,null,res);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,value = "/detail/{reportId}")
+    public ResultCode reportDetailList(@PathVariable("reportId")Integer id){
+        List<ReportDetail> res= new ArrayList<>();
+        try{
+            res=reportService.reportDetailList(id);
+        }catch (Exception e){
+            log.error("查询报告详情异常:{}",e.getMessage());
             return ResultCode.getFailure(null,e.getMessage());
         }
         return ResultCode.getSuccessReturn(null,null,res);

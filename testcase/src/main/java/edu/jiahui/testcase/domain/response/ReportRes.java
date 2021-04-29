@@ -1,5 +1,6 @@
 package edu.jiahui.testcase.domain.response;
 
+import edu.jiahui.testcase.model.bo.BaseBo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class ReportRes {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Report{
+    public static class Report {
 
         private Integer id;
 
@@ -31,8 +32,5 @@ public class ReportRes {
 
         private Integer result;
 
-        private String reportLink;
-
-        private String reportHtml;
     }
 }

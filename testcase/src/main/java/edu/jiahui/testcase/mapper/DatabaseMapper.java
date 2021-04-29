@@ -1,5 +1,6 @@
 package edu.jiahui.testcase.mapper;
 
+import edu.jiahui.testcase.domain.Database;
 import edu.jiahui.testcase.domain.DatabaseWithBLOBs;
 import edu.jiahui.testcase.domain.request.DatabaseReq;
 import edu.jiahui.testcase.domain.request.SearchDatabaseReq;
@@ -15,4 +16,5 @@ public interface DatabaseMapper {
     void update(DatabaseReq req);
     List<DatabaseWithBLOBs> select(SearchDatabaseReq req);
     void delete(Integer id);
+    List<Database> selectMini();
 }

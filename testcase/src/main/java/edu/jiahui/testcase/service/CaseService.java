@@ -318,7 +318,7 @@ public class CaseService {
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
             while((line=in.readLine())!=null){
-                if(line.startsWith("{")){
+                if(line.startsWith("[")){
                     reportContent=line;
                 }
             }

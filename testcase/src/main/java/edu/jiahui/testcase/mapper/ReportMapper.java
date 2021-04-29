@@ -8,5 +8,5 @@ public interface ReportMapper {
     Report selectByPrimaryKey(Integer id);
     List<Report> selectByTestcaseId(Integer id);
     List<Report> selectByGroupId(Integer id);
-    void insert(Report report);
+    Integer insert(Report report);
 }

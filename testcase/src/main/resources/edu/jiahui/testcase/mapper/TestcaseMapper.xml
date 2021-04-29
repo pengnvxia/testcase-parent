@@ -57,8 +57,8 @@
   </select>
 
   <insert id="insert" parameterType="edu.jiahui.testcase.domain.Testcase" useGeneratedKeys="true" keyProperty="id">
-    insert into testcase (testcase_name,env_id,config_ids,interface_id,url,method) values
-    (#{testcaseName},#{envId},#{configIds},#{interfaceId},#{url},#{method})
+    insert into testcase (testcase_name,env_id,config_ids,interface_id,url,method,created_by,updated_by) values
+    (#{testcaseName},#{envId},#{configIds},#{interfaceId},#{url},#{method},#{createdBy},#{updatedBy})
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="edu.jiahui.testcase.domain.Testcase" >
