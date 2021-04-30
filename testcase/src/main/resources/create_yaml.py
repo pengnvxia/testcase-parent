@@ -32,6 +32,3 @@ if __name__ == '__main__':
 			a.append(sys.argv[i])
 
 	print(create_yaml(a[0], a[1], a[2]))
-
-
-
