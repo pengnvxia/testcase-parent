@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.jiahui.testcase.mapper.ReportDetailMapper" >
+  <resultMap id="BaseResultMap" type="edu.jiahui.testcase.domain.ReportDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="report_id" property="reportId" jdbcType="INTEGER" />
+    <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="method" property="method" jdbcType="VARCHAR" />
+    <result column="status_code" property="statusCode" jdbcType="VARCHAR" />
+    <result column="request_headers" property="requestHeaders" jdbcType="LONGVARCHAR" />
+    <result column="request_body" property="requestBody" jdbcType="LONGVARCHAR" />
+    <result column="response" property="response" jdbcType="LONGVARCHAR" />
+    <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+    <result column="validators" property="validators" jdbcType="LONGVARCHAR" />
+    <result column="updated_by" property="updatedBy" jdbcType="INTEGER" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="edu.jiahui.testcase.domain.ReportDetail" extends="BaseResultMap" >
+    <result column="exception" property="exception" jdbcType="LONGVARCHAR" />
+    <result column="attachment" property="attachment" jdbcType="LONGVARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, report_id, result, url, method, status_code, request_headers, request_body, response,
+    created_by, validators, updated_by, created_at, updated_at
+  </sql>
+  <sql id="Blob_Column_List" >
+    exception,attachment
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from report_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByReportId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from report_detail
+    where report_id = #{reportId,jdbcType=INTEGER}
+    order by id asc
+  </select>
+
+  <insert id="insert" parameterType="edu.jiahui.testcase.domain.ReportDetail">
+    insert into report_detail
+    (report_id, result, url, method, status_code, request_headers, request_body, response,
+    created_by, validators, attachment, updated_by)
+    values
+    (#{reportId}, #{result}, #{url}, #{method}, #{statusCode}, #{requestHeaders}, #{requestBody}, #{response},
+    #{createdBy}, #{validators}, #{attachment}, #{updatedBy})
+  </insert>
+</mapper>
