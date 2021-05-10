@@ -678,41 +678,41 @@ public class TestcaseService {
 //            e.printStackTrace();
 //        }
         //创建初始化sql脚本
-        List<DatabaseWithBLOBs> databaseList= databaseMapper.selectByIds(ids);
-        FileOutputStream outputStream = null;
-        try{
-            File file = new File(dockerConstants.dockerInitSqlPath);
-            if(file.exists()){
-                file.delete();
-            }
-            file.createNewFile();
-            outputStream = new FileOutputStream(file,true);
-            for(DatabaseWithBLOBs database : databaseList){
-                if(database.getDbName()==null){
-                    throw (new ClientException(BaseConstans.BUSI_CODE.DBNAME_NOT_EXIT.getCode(),BaseConstans.BUSI_CODE.DBNAME_NOT_EXIT.getMsg()));
-                }else {
-                    outputStream.write(("CREATE DATABASE " + database.getDbName() + ";\n").getBytes());
-                    outputStream.write(("USE " + database.getDbName() + ";\n").getBytes());
-                }
-                if(database.getCreateTableSql()!=null){
-                    outputStream.write((database.getCreateTableSql()+ "\n").getBytes());
-                }
-                if(database.getInsertSql()!=null){
-                    outputStream.write((database.getInsertSql()+"\n").getBytes());
-                }
-            }
-        } catch (Exception e){
-            throw (new ClientException(null,e.getMessage()));
-        }finally {
-            try{
-                outputStream.close();
-            }catch (IOException e){
-                throw (new ClientException(null,e.getMessage()));
-            }
-        }
-        //启动数据库
-        String shellUrl ="sh " + dockerConstants.shellPath;
-        Integer pid = ShellUtil.executeShellReturnexitValue(shellUrl);
+//        List<DatabaseWithBLOBs> databaseList= databaseMapper.selectByIds(ids);
+//        FileOutputStream outputStream = null;
+//        try{
+//            File file = new File(dockerConstants.dockerInitSqlPath);
+//            if(file.exists()){
+//                file.delete();
+//            }
+//            file.createNewFile();
+//            outputStream = new FileOutputStream(file,true);
+//            for(DatabaseWithBLOBs database : databaseList){
+//                if(database.getDbName()==null){
+//                    throw (new ClientException(BaseConstans.BUSI_CODE.DBNAME_NOT_EXIT.getCode(),BaseConstans.BUSI_CODE.DBNAME_NOT_EXIT.getMsg()));
+//                }else {
+//                    outputStream.write(("CREATE DATABASE " + database.getDbName() + ";\n").getBytes());
+//                    outputStream.write(("USE " + database.getDbName() + ";\n").getBytes());
+//                }
+//                if(database.getCreateTableSql()!=null){
+//                    outputStream.write((database.getCreateTableSql()+ "\n").getBytes());
+//                }
+//                if(database.getInsertSql()!=null){
+//                    outputStream.write((database.getInsertSql()+"\n").getBytes());
+//                }
+//            }
+//        } catch (Exception e){
+//            throw (new ClientException(null,e.getMessage()));
+//        }finally {
+//            try{
+//                outputStream.close();
+//            }catch (IOException e){
+//                throw (new ClientException(null,e.getMessage()));
+//            }
+//        }
+//        //启动数据库
+//        String shellUrl ="sh " + dockerConstants.shellPath;
+//        Integer pid = ShellUtil.executeShellReturnexitValue(shellUrl);
 
     }
 

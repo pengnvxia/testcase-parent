@@ -9,9 +9,9 @@ public class DockerConstants {
 //    @Value("${docker.ip.port}")
 //    public String dockerIpPort;
 
-    @Value("${docker.init.sql.path}")
-    public String dockerInitSqlPath;
+//    @Value("${docker.init.sql.path}")
+//    public String dockerInitSqlPath;
 
-    @Value("${shell.path}")
-    public String shellPath;
+//    @Value("${shell.path}")
+//    public String shellPath;
 }
