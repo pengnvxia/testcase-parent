@@ -717,11 +717,11 @@ public class TestcaseService {
     }
 
     //删除数据库镜像等操作
-    public void deleteDatabase(){
-        httpClientTemplate.doPost(dockerConstants.dockerIpPort + "/containers/mysqlc/stop",(Object)null);
-        httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/containers/mysqlc");
-        httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/images/mysql:5.7c");
-    }
+//    public void deleteDatabase(){
+//        httpClientTemplate.doPost(dockerConstants.dockerIpPort + "/containers/mysqlc/stop",(Object)null);
+//        httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/containers/mysqlc");
+//        httpClientTemplate.doDelete(dockerConstants.dockerIpPort + "/images/mysql:5.7c");
+//    }
 
     public List<Testcase> caseList(CaseListReq req){
         List<Testcase> testcaseList = testcaseMapper.selectByIds(req);
