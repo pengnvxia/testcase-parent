@@ -9,6 +9,7 @@ import edu.jiahui.testcase.constants.PythonConstants;
 import edu.jiahui.testcase.domain.*;
 import edu.jiahui.testcase.mapper.*;
 import edu.jiahui.testcase.utils.JDBCUtil;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -203,6 +204,8 @@ public class CaseService {
                             case "Number":
                                 actualExceptedList.add(Integer.parseInt(testcaseDetail.getExpectedValue()));
                                 break;
+                            case "Boolean":
+                                actualExceptedList.add(Boolean.valueOf(testcaseDetail.getExpectedValue()).booleanValue());
                             default:
                                 actualExceptedList.add(testcaseDetail.getExpectedValue());
                         }
