@@ -1,4 +1,8 @@
 FROM 172.19.22.1/java-initial/java:v1
+RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+        -e 's|^#baseurl=http://mirror.centos.org/centos/|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos-vault/|g' \
+        -i.bak \
+        /etc/yum.repos.d/CentOS-*.repo
 ARG variable=testcase_dev
 ENV CLUSTER_NAME=$variable
 RUN cd /opt/
