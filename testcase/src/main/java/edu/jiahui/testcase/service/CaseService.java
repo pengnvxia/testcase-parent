@@ -206,8 +206,8 @@ public class CaseService {
                             case "Number":
                                 actualExceptedList.add(Integer.parseInt(testcaseDetail.getExpectedValue()));
                                 break;
-                            case "Boolean":
-                                actualExceptedList.add(Boolean.valueOf(testcaseDetail.getExpectedValue()).booleanValue());
+//                            case "Boolean":
+//                                actualExceptedList.add(Boolean.valueOf(testcaseDetail.getExpectedValue()).booleanValue());
                             default:
                                 actualExceptedList.add(testcaseDetail.getExpectedValue());
                         }
@@ -298,8 +298,6 @@ public class CaseService {
 
 
     public void createTestcaseYaml(String projectName,String testcaseName,List caseList){
-        log.error("用例信息{}",caseList);
-        log.error("创建用例文件路径{}",pythonConstants.pythonCreateYaml);
         try {
             String[] args = new String[]{"python3", pythonConstants.pythonCreateYaml, projectName, testcaseName, JSON.toJSONString(caseList)};
             Process proc = Runtime.getRuntime().exec(args);
