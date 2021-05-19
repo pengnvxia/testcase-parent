@@ -1,4 +1,5 @@
-FROM 172.19.22.1/java-initial/java:v1
+#FROM 172.19.22.1/java-initial/java:v1
+FROM 15056332824/java:latest
 ARG variable=testcase_dev
 ENV CLUSTER_NAME=$variable
 RUN cd /opt/
