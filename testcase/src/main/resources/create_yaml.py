@@ -11,7 +11,8 @@ import ast
 
 
 def create_yaml(project, path, testcase_list):
-	root_path = './yaml'
+	# root_path = './yaml'
+	root_path = '/opt/yaml'
 	if not os.path.exists(root_path):
 		os.makedirs(root_path)
 	project_testcase_path = os.path.join(root_path, project)

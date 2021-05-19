@@ -9,6 +9,7 @@ import edu.jiahui.testcase.constants.PythonConstants;
 import edu.jiahui.testcase.domain.*;
 import edu.jiahui.testcase.mapper.*;
 import edu.jiahui.testcase.utils.JDBCUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class CaseService {
 
     @Resource
@@ -296,6 +298,8 @@ public class CaseService {
 
 
     public void createTestcaseYaml(String projectName,String testcaseName,List caseList){
+        log.error("用例信息{}",caseList);
+        log.error("创建用例文件路径{}",pythonConstants.pythonCreateYaml);
         try {
             String[] args = new String[]{"python3", pythonConstants.pythonCreateYaml, projectName, testcaseName, JSON.toJSONString(caseList)};
             Process proc = Runtime.getRuntime().exec(args);

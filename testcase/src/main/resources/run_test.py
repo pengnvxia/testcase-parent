@@ -50,7 +50,8 @@ def stringify_data(meta_data, request_or_response):
 def run_test(projectName,testcaseName):
 	# projectName = 'paper'
 	# testcaseName= 'testExtract-可行'
-    testset_path = './yaml/' + projectName + '/' + testcaseName + '.yml'
+    # testset_path = './yaml/' + projectName + '/' + testcaseName + '.yml'
+    testset_path = '/opt/yaml/' + projectName + '/' + testcaseName + '.yml'
     report_name = testcaseName
     kwargs = {
 	    "failfast": False,
