@@ -1,4 +1,5 @@
-
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 from base64 import b64encode
 from collections import Iterable
 
